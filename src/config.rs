@@ -25,7 +25,7 @@ pub enum BuildError {
 
 pub struct ConfigBuilder<'a> {
   fft_dim: u32,
-  size: [u32; 3usize],
+  size: [u32; 4usize],
 
   physical_device: Option<PhysicalDevice<'a>>,
   device: Option<Arc<Device>>,
@@ -39,8 +39,8 @@ pub struct ConfigBuilder<'a> {
   kernel: Option<BufferDesc>,
   normalize: bool,
   zero_padding: [bool; 3usize],
-  zeropad_left: [u32; 3usize],
-  zeropad_right: [u32; 3usize],
+  zeropad_left: [u32; 4usize],
+  zeropad_right: [u32; 4usize],
   kernel_convolution: bool,
   convolution: bool,
   r2c: bool,
@@ -58,7 +58,7 @@ impl<'a> ConfigBuilder<'a> {
   pub fn new() -> Self {
     Self {
       fft_dim: 1,
-      size: [1, 1, 1],
+      size: [1, 1, 1, 1],
       physical_device: None,
       device: None,
       queue: None,
@@ -66,8 +66,8 @@ impl<'a> ConfigBuilder<'a> {
       command_pool: None,
       normalize: false,
       zero_padding: [false, false, false],
-      zeropad_left: [0, 0, 0],
-      zeropad_right: [0, 0, 0],
+      zeropad_left: [0, 0, 0, 0],
+      zeropad_right: [0, 0, 0, 0],
       kernel_convolution: false,
       r2c: false,
       coordinate_features: 1,
@@ -387,7 +387,7 @@ impl BufferDesc {
 
 pub struct Config<'a> {
   pub fft_dim: u32,
-  pub size: [u32; 3usize],
+  pub size: [u32; 4usize],
 
   pub physical_device: PhysicalDevice<'a>,
   pub device: Arc<Device>,
@@ -408,10 +408,10 @@ pub struct Config<'a> {
   pub zero_padding: [bool; 3usize],
 
   /// Specify start boundary of zero block in the system for each axis
-  pub zeropad_left: [u32; 3usize],
+  pub zeropad_left: [u32; 4usize],
 
   /// Specify end boundary of zero block in the system for each axis
-  pub zeropad_right: [u32; 3usize],
+  pub zeropad_right: [u32; 4usize],
 
   /// Specify if this application is used to create kernel for convolution, so it has the same properties
   pub kernel_convolution: bool,

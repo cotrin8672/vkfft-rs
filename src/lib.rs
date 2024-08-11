@@ -1,5 +1,3 @@
-#![feature(core_intrinsics)]
-
 pub mod app;
 pub mod config;
 pub mod error;
