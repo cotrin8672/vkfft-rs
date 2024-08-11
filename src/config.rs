@@ -58,7 +58,7 @@ impl<'a> ConfigBuilder<'a> {
   pub fn new() -> Self {
     Self {
       fft_dim: 1,
-      size: [1, 1, 1, 1],
+      size: [1, 1, 1, 0],
       physical_device: None,
       device: None,
       queue: None,
@@ -551,17 +551,37 @@ impl<'a> Config<'a> {
     unsafe {
       let keep_alive = KeepAlive {
         device: self.device.clone(),
-        buffer: self.buffer.as_ref().map(|b| b.as_buffer().cloned()).flatten(),
-        input_buffer: self.input_buffer.as_ref().map(|b| b.as_buffer().cloned()).flatten(),
-        output_buffer: self.output_buffer.as_ref().map(|b| b.as_buffer().cloned()).flatten(),
-        kernel: self.kernel.as_ref().map(|b| b.as_buffer().cloned()).flatten(),
+        buffer: self
+          .buffer
+          .as_ref()
+          .map(|b| b.as_buffer().cloned())
+          .flatten(),
+        input_buffer: self
+          .input_buffer
+          .as_ref()
+          .map(|b| b.as_buffer().cloned())
+          .flatten(),
+        output_buffer: self
+          .output_buffer
+          .as_ref()
+          .map(|b| b.as_buffer().cloned())
+          .flatten(),
+        kernel: self
+          .kernel
+          .as_ref()
+          .map(|b| b.as_buffer().cloned())
+          .flatten(),
         command_pool: self.command_pool.clone(),
         queue: self.queue.clone(),
-        temp_buffer: self.temp_buffer.as_ref().map(|b| b.as_buffer().cloned()).flatten()
+        temp_buffer: self
+          .temp_buffer
+          .as_ref()
+          .map(|b| b.as_buffer().cloned())
+          .flatten(),
       };
 
       let mut res = Box::pin(ConfigGuard {
-        keep_alive, 
+        keep_alive,
         config: zeroed(),
         physical_device: self.physical_device.internal_object(),
         device: self.device.internal_object().value() as usize,
@@ -658,7 +678,6 @@ impl<'a> Config<'a> {
       if res.output_buffer_size != 0 {
         res.config.outputBufferNum = 1;
         res.config.outputBufferSize = transmute(addr_of_mut!(res.output_buffer_size));
-
       }
 
       if let Some(t) = &res.output_buffer {
