@@ -37,7 +37,7 @@ fn main() -> Result<(), Box<dyn Error>> {
   let size = [16, 16];
   let size_fft = [2 * (size[0] / 2 + 1), size[1]];
   let buffer_size = size_fft[0] * size_fft[1];
-  
+
   let data = CpuAccessibleBuffer::from_iter(
     context.device.clone(),
     DEFAULT_BUFFER_USAGE,
@@ -45,8 +45,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     (0..buffer_size).map(|_| 0.0f32),
   )?;
 
-  let k_x = 4.0f32 * std::f32::consts::TAU/size[0] as f32;
-  let k_y = 0.0f32 * std::f32::consts::TAU/size[1] as f32;
+  let k_x = 1.0f32 * std::f32::consts::TAU / size[0] as f32;
+  let k_y = 0.0f32 * std::f32::consts::TAU / size[1] as f32;
   data.write()?.iter_mut().enumerate().for_each(|(i, val)| {
     let x = (i % size[0] as usize) as f32;
     let y = (i / size[0] as usize) as f32;

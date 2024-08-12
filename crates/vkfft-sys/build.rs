@@ -109,69 +109,58 @@ where
   Ok(bindings)
 }
 
+/// Include the text of a file in place of the #include statement when making a wrapper.
+/// The operation will only take place if the file name or path contains path_hint.
+/// For example, if path_hint is "/VkFFT", #include "math.h" will be left as-is but the
+/// first instance of #include "vkFFT/VkFFT_Structs/vkFFT_Structs.h" will be replaced by
+/// that file's contents. Subsequent #include statements to that file will be removed.
+/// This will be done recursively until no more matches are found.
 fn process_includes(
   file: &str,
   root_path: &str,
   path_hint: &str,
-  max_recursion: u32
 ) -> Result<String, Box<dyn Error>> {
   let mut included_files: HashMap<String, u32> = HashMap::new();
-  let mut stack: Vec<String> = Vec::new();
   let mut result: String = std::fs::read_to_string(&format!("{}/{}", root_path, file))?;
   let re = Regex::new(&format!("#include \"{}(.*)\"", path_hint)).unwrap();
-
-  // Push the initial file onto the stack
-  stack.push(file.into());
 
   while let Some(capture) = re.captures(&result.clone()) {
     let current_file = &capture[1];
     if included_files.contains_key(current_file) {
-      if included_files[current_file] < max_recursion {
-        *included_files.entry(current_file.to_string()).or_insert(1) += 1;
-        result = result.replace(&format!("#include \"{}{}\"",path_hint, current_file),"");
-      } else{
-        result = result.replace(&format!("#include \"{}{}\"",path_hint, current_file),"");
-        continue;
-      }
+      result = result.replace(&format!("#include \"{}{}\"", path_hint, current_file), "");
+      continue;
     } else {
-      included_files.insert(current_file.to_string(),1);
+      included_files.insert(current_file.to_string(), 1);
     }
-    
+
     let current_path = format!("{}/{}", root_path, current_file);
     let file_content = std::fs::read_to_string(&current_path)?;
-    println!("working on: {}", current_file);
-    println!("#include \"{}{}\"\n",path_hint, current_file);
-    result = result.replace(&format!("#include \"{}{}\"",path_hint, current_file),&file_content);
+    result = result.replace(
+      &format!("#include \"{}{}\"", path_hint, current_file),
+      &file_content,
+    );
   }
 
   Ok(result)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-  let vkfft_root = std::env::var("VKFFT_ROOT")?;
+
   let out_dir = std::env::var("OUT_DIR")?;
   let out_dir = PathBuf::from(out_dir);
 
-  let library_dirs = [
-    format!("{}/build/glslang-main/glslang", vkfft_root),
-    format!("{}/build/glslang-main/glslang/OSDependent/Unix", vkfft_root),
-    format!("{}/build/glslang-main/OGLCompilersDLL", vkfft_root),
-    format!("{}/build/glslang-main/SPIRV", vkfft_root),
-  ];
+  let library_dirs: [&str;0] = [];
 
   let libraries = [
     "glslang",
     "MachineIndependent",
     "OSDependent",
     "GenericCodeGen",
-    "OGLCompiler",
     "vulkan",
     "SPIRV",
+    "SPIRV-Tools",
+    "SPIRV-Tools-opt",
   ];
-
-  for library_dir in library_dirs.iter() {
-    println!("cargo:rustc-link-search={}", library_dir);
-  }
 
   for library in libraries.iter() {
     println!("cargo:rustc-link-lib={}", library);
@@ -181,21 +170,23 @@ fn main() -> Result<(), Box<dyn Error>> {
   println!("cargo:rerun-if-changed=build.rs");
 
   let include_dirs = [
-    format!("{}/vkFFT", &vkfft_root),
-    format!("{}/glslang-main/glslang/Include", vkfft_root),
+    "vkFFT/vkFFt".to_string(),
   ];
 
   let defines = [("VKFFT_BACKEND", "0"), ("VK_API_VERSION", "11")];
 
   let wrapper = process_includes(
     &format!("../vkFFT.h"),
-    &(vkfft_root + "/vkFFT/vkFFT"),
-    "vkFFT",
-    1
+    "vkFFT/vkFFT",
+    "vkFFT"
   )?
   .replace("static inline ", "")
-  .replace("pfLD double_PI;","double double_PI;")
-  .replace("pfLD d; // long double", "double d; // long double replaced with double");
+  .replace("#include \"glslang_c_interface.h\"", "#include \"glslang/Include/glslang_c_interface.h\"")
+  .replace("pfLD double_PI;", "double double_PI;")
+  .replace(
+    "pfLD d; // long double",
+    "double d; // long double replaced with double",
+  );
 
   let rw = out_dir.join("vkfft_rw.hpp");
   std::fs::write(&rw, wrapper.as_str())?;
