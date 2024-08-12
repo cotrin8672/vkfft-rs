@@ -191,9 +191,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     &format!("../vkFFT.h"),
     &(vkfft_root + "/vkFFT/vkFFT"),
     "vkFFT",
-    100
+    1
   )?
-  .replace("static inline ", "");
+  .replace("static inline ", "")
+  .replace("pfLD double_PI;","double double_PI;")
+  .replace("pfLD d; // long double", "double d; // long double replaced with double");
 
   let rw = out_dir.join("vkfft_rw.hpp");
   std::fs::write(&rw, wrapper.as_str())?;
