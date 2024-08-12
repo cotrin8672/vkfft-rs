@@ -150,7 +150,9 @@ fn main() -> Result<(), Box<dyn Error>> {
   let out_dir = PathBuf::from(out_dir);
 
   let library_dirs: [&str;0] = [];
-
+  // the following packages are assumed to be available on the system:
+  // glslang + dev
+  // spirv-tools + dev
   let libraries = [
     "glslang",
     "MachineIndependent",
