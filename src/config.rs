@@ -641,7 +641,6 @@ impl<'a> Config<'a> {
       }
 
       if let Some(t) = &res.kernel {
-        println!("K: {:#0x}", t);
         res.config.kernel = transmute(t);
       }
 
@@ -651,7 +650,6 @@ impl<'a> Config<'a> {
       }
 
       if let Some(t) = &res.buffer {
-        println!("B: {:#0x}", *t);
         res.config.buffer = transmute(t);
       }
 
@@ -661,7 +659,6 @@ impl<'a> Config<'a> {
       }
 
       if let Some(t) = &res.temp_buffer {
-        println!("T: {:#0x}", *t);
         res.config.tempBuffer = transmute(t);
       }
 
@@ -671,7 +668,6 @@ impl<'a> Config<'a> {
       }
 
       if let Some(t) = &res.input_buffer {
-        println!("I: {:#0x}", *t);
         res.config.inputBuffer = transmute(t);
       }
 
@@ -681,7 +677,6 @@ impl<'a> Config<'a> {
       }
 
       if let Some(t) = &res.output_buffer {
-        println!("O: {:#0x}", *t);
         res.config.outputBuffer = transmute(t);
       }
 
