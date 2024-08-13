@@ -45,8 +45,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     (0..buffer_size).map(|_| 0.0f32),
   )?;
 
-  let k_x = 1.0f32 * std::f32::consts::TAU / size[0] as f32;
-  let k_y = 0.0f32 * std::f32::consts::TAU / size[1] as f32;
+  let output_data = CpuAccessibleBuffer::from_iter(
+    context.device.clone(),
+    DEFAULT_BUFFER_USAGE,
+    false,
+    (0..buffer_size).map(|_| 0.0f32),
+  )?;
+
+  let k_x = 2.0f32 * std::f32::consts::TAU / size[0] as f32;
+  let k_y = 1.0f32 * std::f32::consts::TAU / size[1] as f32;
   data.write()?.iter_mut().enumerate().for_each(|(i, val)| {
     let x = (i % size[0] as usize) as f32;
     let y = (i / size[0] as usize) as f32;
@@ -55,13 +62,14 @@ fn main() -> Result<(), Box<dyn Error>> {
 
   println!("Data:");
   print_matrix_buffer(&data, &size);
-
   let config = Config::builder()
     .physical_device(context.physical)
     .device(context.device.clone())
     .fence(&context.fence)
     .queue(context.queue.clone())
+    .input_buffer(data.clone())
     .buffer(data.clone())
+    .input_formatted(true)
     .command_pool(context.pool.clone())
     .r2c()
     .dim(&size)
