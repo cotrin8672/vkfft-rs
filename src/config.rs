@@ -455,11 +455,11 @@ pub enum ConfigError {
   InvalidConfig,
 }
 
+#[allow(dead_code)]
 pub(crate) struct KeepAlive {
   pub device: Arc<Device>,
   pub queue: Arc<Queue>,
   pub command_pool: Arc<UnsafeCommandPool>,
-
   pub buffer: Option<Arc<dyn BufferAccess>>,
   pub input_buffer: Option<Arc<dyn BufferAccess>>,
   pub output_buffer: Option<Arc<dyn BufferAccess>>,
