@@ -6,51 +6,46 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;
 use std::path::{Path, PathBuf};
+use std::env;
+use glob::glob;
 
-fn build_lib<O, LD, L, const N: usize, const M: usize>(
-  out_dir: O,
-  library_dirs: LD,
-  libraries: L,
-  defines: &[(&str, &str); N],
-  include_dirs: &[String; M],
-) -> Result<(), Box<dyn Error>>
-where
-  O: AsRef<Path>,
-  LD: Iterator,
-  LD::Item: AsRef<str>,
-  L: Iterator,
-  L::Item: AsRef<str>,
-{
-  let mut build = cc::Build::default();
-
-  build
-    .cpp(true)
-    .file("wrapper.cpp")
-    .include(out_dir)
-    .flag("-std=c++11")
-    .flag("-w");
-
-  for library_dir in library_dirs {
-    build.flag(format!("-L{}", library_dir.as_ref()).as_str());
+//from https://github.com/SnowflakePowered/glslang-rs/blob/master/glslang-sys/build.rs
+pub fn add_subdirectory(build: &mut cc::Build, directory: &str) {
+  for entry in
+      glob(&*format!("glslang/{directory}/**/*.cpp")).expect("failed to read glob")
+  {
+      if let Ok(path) = entry {
+          build.file(path);
+      }
   }
 
-  for library in libraries {
-    build.flag(format!("-l{}", library.as_ref()).as_str());
+  for entry in glob(&*format!("glslang/{directory}/**/*.c")).expect("failed to read glob")
+  {
+      if let Ok(path) = entry {
+          build.file(path);
+      }
   }
+}
 
-  build.cargo_metadata(true).static_flag(true);
+fn build_glslang(){
+  let mut glslang_build = cc::Build::new();
+  glslang_build
+      .cpp(true)
+      .std("c++17")
+      .define("ENABLE_HLSL", "ON")
+      .define("ENABLE_OPT", "OFF")
+      .define("ENABLE_GLSLANG_BINARIES", "OFF")
+      .define("BUILD_EXTERNAL", "OFF")
+      .includes(&["glslang", "glslang_build_info"]);
 
-  for (key, value) in defines.iter() {
-    build.define(*key, Some(*value));
-  }
+  add_subdirectory(&mut glslang_build, "glslang/CInterface");
+  add_subdirectory(&mut glslang_build, "glslang/GenericCodeGen");
+  add_subdirectory(&mut glslang_build, "glslang/HLSL");
+  add_subdirectory(&mut glslang_build, "glslang/MachineIndependent");
+  add_subdirectory(&mut glslang_build, "SPIRV");
 
-  for include_dir in include_dirs.iter() {
-    build.include(include_dir);
-  }
-
-  build.compile("vkfft");
-
-  Ok(())
+  glslang_build.compile("glslang");
+  println!("cargo:rustc-link-lib=static=glslang");
 }
 
 fn gen_wrapper<F, const N: usize, const M: usize>(
@@ -144,26 +139,12 @@ fn process_includes(
   Ok(result)
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
-
+fn build_vkfft() -> Result<(), Box<dyn Error>>{
   let out_dir = std::env::var("OUT_DIR")?;
   let out_dir = PathBuf::from(out_dir);
 
   let library_dirs: [&str;0] = [];
-  // the following packages are assumed to be available on the system:
-  // glslang + dev
-  // spirv-tools + dev
-  let libraries = [
-    "glslang",
-    "MachineIndependent",
-    "OSDependent",
-    "GenericCodeGen",
-    "vulkan",
-    "SPIRV",
-    "SPIRV-Tools",
-    "SPIRV-Tools-opt",
-  ];
-
+  let libraries = ["vulkan"];
   for library in libraries.iter() {
     println!("cargo:rustc-link-lib={}", library);
   }
@@ -191,18 +172,49 @@ fn main() -> Result<(), Box<dyn Error>> {
   );
 
   let rw = out_dir.join("vkfft_rw.hpp");
+  
   std::fs::write(&rw, wrapper.as_str())?;
 
-  build_lib(
-    &out_dir,
-    library_dirs.iter(),
-    libraries.iter(),
-    &defines,
-    &include_dirs,
-  )?;
+  let mut build = cc::Build::default();
+
+  build
+    .cpp(true)
+    .std("c++17")
+    .file("wrapper.cpp")
+    .include(out_dir.clone())
+    .flag("-w");
+
+  for library_dir in library_dirs {
+    build.flag(format!("-L{}", library_dir).as_str());
+  }
+
+  for library in libraries {
+    build.flag(format!("-l{}", library).as_str());
+  }
+
+  build.cargo_metadata(true).static_flag(true);
+
+  for (key, value) in defines.iter() {
+    build.define(*key, Some(*value));
+  }
+
+  for include_dir in include_dirs.iter() {
+    build.include(include_dir);
+  }
+
+  build.compile("vkfft");
 
   let bindings = gen_wrapper(&rw, &defines, &include_dirs)?;
   bindings.write_to_file(out_dir.join("bindings.rs"))?;
+  Ok(())
+}
 
+fn main() -> Result<(), Box<dyn Error>> {
+  if env::var("DOCS_RS").is_ok() {
+      println!("cargo:warning=Skipping glslang native build for docs.rs.");
+      return Ok(());
+  }
+  build_glslang();
+  build_vkfft()?;
   Ok(())
 }

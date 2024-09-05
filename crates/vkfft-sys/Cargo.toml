@@ -1,6 +1,6 @@
 [package]
 name = "vkfft-sys"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Semio AI, Inc."]
 edition = "2018"
 license = "BSD-3-Clause"
@@ -10,3 +10,4 @@ description = "Rust bindings for VkFFT"
 bindgen = "0.69.4"
 cc = "1.1.8"
 regex = "1.10.6"
+glob = "0.3.1"

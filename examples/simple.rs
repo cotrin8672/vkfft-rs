@@ -102,6 +102,9 @@ fn complex_to_complex_1d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>>
     .normalize()
     .dim(&size);
 
+  //note: in a real application, multiple calls to single_fft are not recommended.
+  // instead, re-use an existing vkfft app and vulkan command buffer as they are
+  // defined within this function.
   context.single_fft(config_builder, FftType::Inverse)?;
   println!("After inverse transform:");
   print_complex_matrix_buffer(&data, &printing_size);
