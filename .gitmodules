@@ -1,0 +1,6 @@
+[submodule "crates/vkfft-sys/glslang"]
+	path = crates/vkfft-sys/glslang
+	url = https://github.com/KhronosGroup/glslang
+[submodule "crates/vkfft-sys/VkFFT"]
+	path = crates/vkfft-sys/VkFFT
+	url = https://github.com/DTolm/VkFFT
