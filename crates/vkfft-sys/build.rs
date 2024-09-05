@@ -172,14 +172,14 @@ fn main() -> Result<(), Box<dyn Error>> {
   println!("cargo:rerun-if-changed=build.rs");
 
   let include_dirs = [
-    "vkFFT/vkFFt".to_string(),
+    "VkFFT/vkFFT/vkFFt".to_string(),
   ];
 
   let defines = [("VKFFT_BACKEND", "0"), ("VK_API_VERSION", "11")];
 
   let wrapper = process_includes(
     &format!("../vkFFT.h"),
-    "vkFFT/vkFFT",
+    "VkFFT/vkFFT/vkFFT",
     "vkFFT"
   )?
   .replace("static inline ", "")
