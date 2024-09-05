@@ -12,7 +12,7 @@ use vulkano::instance::{Instance, InstanceExtensions};
 
 use std::{error::Error, sync::Arc};
 
-use util::{Context, SizeIterator, MatrixFormatter};
+use util::{Context, MatrixFormatter, SizeIterator};
 
 const DEFAULT_BUFFER_USAGE: BufferUsage = BufferUsage {
   storage_buffer: true,
@@ -20,9 +20,6 @@ const DEFAULT_BUFFER_USAGE: BufferUsage = BufferUsage {
   transfer_destination: true,
   ..BufferUsage::none()
 };
-
-
-
 
 /// Transform a kernel from spatial data to frequency data
 pub fn transform_kernel(
@@ -214,7 +211,6 @@ fn main() -> Result<(), Box<dyn Error>> {
   println!("Kernel:");
   println!("{}", &MatrixFormatter::new(&size, &kernel));
   println!();
-
 
   transform_kernel(
     &mut context,

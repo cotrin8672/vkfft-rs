@@ -1,8 +1,8 @@
+use std::{error::Error, sync::Arc};
 use vkfft::config::Config;
 use vkfft::context::{Context, FftType};
 use vulkano::buffer::{BufferUsage, CpuAccessibleBuffer};
 use vulkano::instance::{Instance, InstanceExtensions};
-use std::{error::Error, sync::Arc};
 
 const DEFAULT_BUFFER_USAGE: BufferUsage = BufferUsage {
   storage_buffer: true,
@@ -11,8 +11,7 @@ const DEFAULT_BUFFER_USAGE: BufferUsage = BufferUsage {
   ..BufferUsage::none()
 };
 
-fn real_to_complex_2d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>>{
-
+fn real_to_complex_2d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>> {
   let k_x_coord = 2;
   let k_y_coord = 3;
   println!("------------");
@@ -55,16 +54,17 @@ fn real_to_complex_2d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>>{
   Ok(())
 }
 
-fn complex_to_complex_1d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>>{
-
+fn complex_to_complex_1d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>> {
   let k_coord = 2;
   println!("------------");
-  println!("Performing 1D complex-to-complex FFT. The plane wave should localize to position [{k_coord}]:");
+  println!(
+    "Performing 1D complex-to-complex FFT. The plane wave should localize to position [{k_coord}]:"
+  );
 
   let mut context = Context::new(instance)?;
 
   let size = [8];
-  let buffer_size = 2*size[0];
+  let buffer_size = 2 * size[0];
   let printing_size = [buffer_size, 1];
 
   let data = CpuAccessibleBuffer::from_iter(
@@ -79,8 +79,7 @@ fn complex_to_complex_1d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>>
     let x = (i as usize / 2usize) as f32;
     if i % 2 == 0 {
       *val = (k_x * x).cos()
-    }
-    else {
+    } else {
       *val = (k_x * x).sin()
     }
   });
@@ -97,13 +96,12 @@ fn complex_to_complex_1d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>>
   println!("Transformed data:");
   print_complex_matrix_buffer(&data, &printing_size);
 
-  
   let config_builder = Config::builder()
-  .input_buffer(data.clone())
-  .buffer(data.clone())
-  .normalize()
-  .dim(&size);
-  
+    .input_buffer(data.clone())
+    .buffer(data.clone())
+    .normalize()
+    .dim(&size);
+
   context.single_fft(config_builder, FftType::Inverse)?;
   println!("After inverse transform:");
   print_complex_matrix_buffer(&data, &printing_size);

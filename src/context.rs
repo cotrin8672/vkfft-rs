@@ -1,11 +1,18 @@
-use vulkano::command_buffer::{pool::{UnsafeCommandPool, UnsafeCommandPoolAlloc}, sys::{Flags, UnsafeCommandBufferBuilder}, Kind};
+use crate::{
+  app::{App, LaunchParams},
+  config::ConfigBuilder,
+};
+use std::{error::Error, sync::Arc};
+use vulkano::command_buffer::{
+  pool::{UnsafeCommandPool, UnsafeCommandPoolAlloc},
+  sys::{Flags, UnsafeCommandBufferBuilder},
+  Kind,
+};
 use vulkano::command_buffer::{submit::SubmitCommandBufferBuilder, sys::UnsafeCommandBuffer};
 use vulkano::device::{Device, DeviceExtensions, Features, Queue};
 use vulkano::instance::debug::{DebugCallback, Message, MessageSeverity, MessageType};
 use vulkano::instance::{Instance, PhysicalDevice};
 use vulkano::sync::Fence;
-use std::{error::Error, sync::Arc};
-use crate::{app::{App, LaunchParams}, config::ConfigBuilder};
 
 const MESSAGE_SEVERITIES: MessageSeverity = MessageSeverity {
   error: true,
@@ -15,7 +22,7 @@ const MESSAGE_SEVERITIES: MessageSeverity = MessageSeverity {
 };
 pub enum FftType {
   Forward,
-  Inverse
+  Inverse,
 }
 
 fn on_debug_message(msg: &Message) {
@@ -130,32 +137,38 @@ impl<'a> Context<'a> {
     Ok(())
   }
 
-  pub fn single_fft(&mut self, config_builder: ConfigBuilder, fft_type: FftType) -> Result<(), Box<dyn std::error::Error>> {
-      // Allocate a command buffer
+  pub fn single_fft(
+    &mut self,
+    config_builder: ConfigBuilder,
+    fft_type: FftType,
+  ) -> Result<(), Box<dyn std::error::Error>> {
+    // Allocate a command buffer
     let primary_cmd_buffer = self.alloc_primary_cmd_buffer()?;
 
     // Create command buffer handle
-    let builder =
-      unsafe { UnsafeCommandBufferBuilder::new(&primary_cmd_buffer, Kind::primary(), Flags::None)? };
+    let builder = unsafe {
+      UnsafeCommandBufferBuilder::new(&primary_cmd_buffer, Kind::primary(), Flags::None)?
+    };
 
     // Configure FFT launch parameters
     let mut params = LaunchParams::builder().command_buffer(&builder).build()?;
 
     // Add parameters from the present context to the config
-    let config = config_builder.physical_device(self.physical)
-    .device(self.device.clone())
-    .fence(&self.fence)
-    .queue(self.queue.clone())
-    .command_pool(self.pool.clone())
-    .build()?;
+    let config = config_builder
+      .physical_device(self.physical)
+      .device(self.device.clone())
+      .fence(&self.fence)
+      .queue(self.queue.clone())
+      .command_pool(self.pool.clone())
+      .build()?;
 
     // Construct FFT "Application"
     let mut app = App::new(config)?;
 
     // Run forward FFT
     match fft_type {
-        FftType::Forward => app.forward(&mut params)?,
-        FftType::Inverse => app.inverse(&mut params)?,
+      FftType::Forward => app.forward(&mut params)?,
+      FftType::Inverse => app.inverse(&mut params)?,
     }
 
     // Dispatch command buffer and wait for completion
