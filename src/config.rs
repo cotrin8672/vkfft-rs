@@ -6,9 +6,9 @@ use vulkano::{
   buffer::BufferAccess,
   command_buffer::pool::UnsafeCommandPool,
   device::{Device, Queue},
-  instance::PhysicalDevice,
+  device::physical::PhysicalDevice,
   sync::Fence,
-  SynchronizedVulkanObject, VulkanHandle, VulkanObject,
+  SynchronizedVulkanObject, VulkanObject,
 };
 
 use std::ptr::addr_of_mut;
@@ -365,7 +365,7 @@ impl From<usize> for BufferDesc {
 impl BufferDesc {
   pub fn size(&self) -> usize {
     match self {
-      Self::Buffer(b) => b.size(),
+      Self::Buffer(b) => b.size() as usize,
       Self::BufferSize(b) => *b,
     }
   }
@@ -471,21 +471,21 @@ pub(crate) struct KeepAlive {
 pub(crate) struct ConfigGuard {
   pub(crate) keep_alive: KeepAlive,
   pub(crate) config: vkfft_sys::VkFFTConfiguration,
-  pub(crate) physical_device: vk_sys::PhysicalDevice,
-  pub(crate) device: vk_sys::Device,
-  pub(crate) queue: vk_sys::Queue,
-  pub(crate) command_pool: vk_sys::CommandPool,
-  pub(crate) fence: vk_sys::Fence,
+  pub(crate) physical_device: ash::vk::PhysicalDevice,
+  pub(crate) device: ash::vk::Device,
+  pub(crate) queue: ash::vk::Queue,
+  pub(crate) command_pool: ash::vk::CommandPool,
+  pub(crate) fence: ash::vk::Fence,
   pub(crate) buffer_size: u64,
-  pub(crate) buffer: Option<vk_sys::Buffer>,
+  pub(crate) buffer: Option<ash::vk::Buffer>,
   pub(crate) input_buffer_size: u64,
-  pub(crate) input_buffer: Option<vk_sys::Buffer>,
+  pub(crate) input_buffer: Option<ash::vk::Buffer>,
   pub(crate) output_buffer_size: u64,
-  pub(crate) output_buffer: Option<vk_sys::Buffer>,
+  pub(crate) output_buffer: Option<ash::vk::Buffer>,
   pub(crate) temp_buffer_size: u64,
-  pub(crate) temp_buffer: Option<vk_sys::Buffer>,
+  pub(crate) temp_buffer: Option<ash::vk::Buffer>,
   pub(crate) kernel_size: u64,
-  pub(crate) kernel: Option<vk_sys::Buffer>,
+  pub(crate) kernel: Option<ash::vk::Buffer>,
 }
 
 impl<'a> Config<'a> {
@@ -584,10 +584,10 @@ impl<'a> Config<'a> {
         keep_alive,
         config: zeroed(),
         physical_device: self.physical_device.internal_object(),
-        device: self.device.internal_object().value() as usize,
-        queue: self.queue.internal_object_guard().value() as usize,
-        command_pool: self.command_pool.internal_object().value(),
-        fence: self.fence.internal_object().value(),
+        device: self.device.internal_object(),
+        queue: *self.queue.internal_object_guard(),
+        command_pool: self.command_pool.internal_object(),
+        fence: self.fence.internal_object(),
         buffer_size: self.buffer.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
         temp_buffer_size: self.temp_buffer.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
         input_buffer_size: self.input_buffer.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
@@ -598,31 +598,31 @@ impl<'a> Config<'a> {
           .as_ref()
           .map(|b| b.as_buffer())
           .flatten()
-          .map(|b| b.inner().buffer.internal_object().value()),
+          .map(|b| b.inner().buffer.internal_object()),
         temp_buffer: self
           .temp_buffer
           .as_ref()
           .map(|b| b.as_buffer())
           .flatten()
-          .map(|b| b.inner().buffer.internal_object().value()),
+          .map(|b| b.inner().buffer.internal_object()),
         input_buffer: self
           .input_buffer
           .as_ref()
           .map(|b| b.as_buffer())
           .flatten()
-          .map(|b| b.inner().buffer.internal_object().value()),
+          .map(|b| b.inner().buffer.internal_object()),
         output_buffer: self
           .output_buffer
           .as_ref()
           .map(|b| b.as_buffer())
           .flatten()
-          .map(|b| b.inner().buffer.internal_object().value()),
+          .map(|b| b.inner().buffer.internal_object()),
         kernel: self
           .kernel
           .as_ref()
           .map(|b| b.as_buffer())
           .flatten()
-          .map(|b| b.inner().buffer.internal_object().value()),
+          .map(|b| b.inner().buffer.internal_object()),
       });
 
       res.config.FFTdim = self.fft_dim as u64;

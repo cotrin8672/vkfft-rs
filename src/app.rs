@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use error::check_error;
-use vulkano::{buffer::BufferAccess, VulkanHandle, VulkanObject};
+use vulkano::{buffer::BufferAccess, Handle, VulkanObject};
 
 use crate::{
   config::{Config, ConfigGuard},
@@ -9,7 +9,7 @@ use crate::{
 };
 
 use std::pin::Pin;
-use vk_sys as vk;
+use ash::vk as vk;
 
 use std::ptr::addr_of_mut;
 
@@ -108,12 +108,12 @@ impl LaunchParamsBuilder {
 #[repr(C)]
 pub(crate) struct LaunchParamsGuard {
   pub(crate) params: vkfft_sys::VkFFTLaunchParams,
-  pub(crate) command_buffer: vk_sys::CommandBuffer,
-  pub(crate) buffer: Option<vk_sys::Buffer>,
-  pub(crate) temp_buffer: Option<vk_sys::Buffer>,
-  pub(crate) input_buffer: Option<vk_sys::Buffer>,
-  pub(crate) output_buffer: Option<vk_sys::Buffer>,
-  pub(crate) kernel: Option<vk_sys::Buffer>,
+  pub(crate) command_buffer: ash::vk::CommandBuffer,
+  pub(crate) buffer: Option<u64>,
+  pub(crate) temp_buffer: Option<u64>,
+  pub(crate) input_buffer: Option<u64>,
+  pub(crate) output_buffer: Option<u64>,
+  pub(crate) kernel: Option<u64>,
 }
 
 pub struct LaunchParams {
@@ -130,7 +130,7 @@ impl LaunchParams {
   where
     B: AsRef<dyn BufferAccess>,
   {
-    buffer.as_ref().inner().buffer.internal_object().value()
+    buffer.as_ref().inner().buffer.internal_object().as_raw()
   }
 
   pub(crate) fn as_sys(&self) -> Pin<Box<LaunchParamsGuard>> {

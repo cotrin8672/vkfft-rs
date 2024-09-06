@@ -9,9 +9,9 @@ use vulkano::command_buffer::{
   CommandBufferUsage,
 };
 use vulkano::command_buffer::{submit::SubmitCommandBufferBuilder, sys::UnsafeCommandBuffer};
-use vulkano::device::{Device, DeviceExtensions, Features, Queue};
+use vulkano::device::{Device, DeviceExtensions, Features, Queue, physical::PhysicalDevice};
 use vulkano::instance::debug::{DebugCallback, Message, MessageSeverity, MessageType};
-use vulkano::instance::{Instance, PhysicalDevice};
+use vulkano::instance::Instance;
 use vulkano::sync::Fence;
 
 const MESSAGE_SEVERITIES: MessageSeverity = MessageSeverity {

@@ -116,6 +116,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
   let instance = Instance::new(
     None,
+    vulkano::Version { major: 14, minor: 0, patch: 0 },
     &InstanceExtensions {
       ext_debug_utils: false,
       ..InstanceExtensions::none()
