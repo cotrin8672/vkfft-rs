@@ -5,8 +5,8 @@ use crate::{
 use std::{error::Error, sync::Arc};
 use vulkano::command_buffer::{
   pool::{UnsafeCommandPool, UnsafeCommandPoolAlloc},
-  sys::{Flags, UnsafeCommandBufferBuilder},
-  Kind,
+  sys::UnsafeCommandBufferBuilder,
+  CommandBufferUsage,
 };
 use vulkano::command_buffer::{submit::SubmitCommandBufferBuilder, sys::UnsafeCommandBuffer};
 use vulkano::device::{Device, DeviceExtensions, Features, Queue};
@@ -147,7 +147,7 @@ impl<'a> Context<'a> {
 
     // Create command buffer handle
     let builder = unsafe {
-      UnsafeCommandBufferBuilder::new(&primary_cmd_buffer, Kind::primary(), Flags::None)?
+      UnsafeCommandBufferBuilder::new(&primary_cmd_buffer, vulkano::command_buffer::CommandBufferLevel::primary(), CommandBufferUsage::MultipleSubmit)?
     };
 
     // Configure FFT launch parameters
