@@ -9,4 +9,4 @@ include!("bindings_win.rs");
 include!("bindings_linux.rs");
 
 #[cfg(target_os = "macos")]
-include!("bindings_macos.rs");
+include!("bindings_mac.rs");
