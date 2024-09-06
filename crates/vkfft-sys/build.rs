@@ -192,8 +192,14 @@ fn build_vkfft() -> Result<(), Box<dyn Error>>{
 
   build.compile("vkfft");
 
-  let bindings = gen_wrapper(&rw, &defines, &include_dirs)?;
-  bindings.write_to_file(out_dir.join("bindings.rs"))?;
+
+  let bindings_path = Path::new("src/bindings.rs");
+
+  if !bindings_path.exists() {
+    let bindings = gen_wrapper(&rw, &defines, &include_dirs)?;
+    bindings.write_to_file(bindings_path)?;
+  }
+
   Ok(())
 }
 
