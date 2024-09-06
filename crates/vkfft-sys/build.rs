@@ -48,10 +48,10 @@ fn build_glslang(){
   println!("cargo:rustc-link-lib=static=glslang");
 }
 
-fn gen_wrapper<F, const N: usize, const M: usize>(
+fn gen_wrapper<F, const N: usize>(
   file: F,
   defines: &[(&str, &str); N],
-  include_dirs: &[String; M],
+  include_dirs: &Vec<String>,
 ) -> Result<Bindings, Box<dyn Error>>
 where
   F: AsRef<Path>,
@@ -143,18 +143,14 @@ fn build_vkfft() -> Result<(), Box<dyn Error>>{
   let out_dir = std::env::var("OUT_DIR")?;
   let out_dir = PathBuf::from(out_dir);
 
-  let library_dirs: [&str;0] = [];
-  let libraries = ["vulkan"];
-  for library in libraries.iter() {
-    println!("cargo:rustc-link-lib={}", library);
-  }
-
   println!("cargo:rerun-if-changed=wrapper.cpp");
   println!("cargo:rerun-if-changed=build.rs");
 
-  let include_dirs = [
-    "VkFFT/vkFFT/vkFFt".to_string(),
-  ];
+  let mut include_dirs = vec!["VkFFT/vkFFT/vkFFt".to_string()];
+
+  if let Ok(var) = env::var("VULKAN_SDK") {
+    include_dirs.push(var.to_string()+"/Include");
+  }
 
   let defines = [("VKFFT_BACKEND", "0"), ("VK_API_VERSION", "11")];
 
@@ -181,16 +177,8 @@ fn build_vkfft() -> Result<(), Box<dyn Error>>{
     .cpp(true)
     .std("c++17")
     .file("wrapper.cpp")
-    .include(out_dir.clone())
-    .flag("-w");
-
-  for library_dir in library_dirs {
-    build.flag(format!("-L{}", library_dir).as_str());
-  }
-
-  for library in libraries {
-    build.flag(format!("-l{}", library).as_str());
-  }
+    .warnings(false)
+    .include(out_dir.clone());
 
   build.cargo_metadata(true).static_flag(true);
 
@@ -209,6 +197,27 @@ fn build_vkfft() -> Result<(), Box<dyn Error>>{
   Ok(())
 }
 
+fn link_vulkan(){
+  //logic copied from ash-rs
+  let target_family = env::var("CARGO_CFG_TARGET_FAMILY").unwrap();
+  let target_pointer_width = env::var("CARGO_CFG_TARGET_POINTER_WIDTH").unwrap();
+
+  println!("cargo:rerun-if-env-changed=VULKAN_SDK");
+  if let Ok(var) = env::var("VULKAN_SDK") {
+      let suffix = match (&*target_family, &*target_pointer_width) {
+          ("windows", "32") => "Lib32",
+          ("windows", "64") => "Lib",
+          _ => "lib",
+      };
+      println!("cargo:rustc-link-search={var}/{suffix}");
+  }
+  let lib = match &*target_family {
+      "windows" => "vulkan-1",
+      _ => "vulkan",
+  };
+  println!("cargo:rustc-link-lib={lib}");
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
   if env::var("DOCS_RS").is_ok() {
       println!("cargo:warning=Skipping glslang native build for docs.rs.");
@@ -216,5 +225,6 @@ fn main() -> Result<(), Box<dyn Error>> {
   }
   build_glslang();
   build_vkfft()?;
+  link_vulkan();
   Ok(())
 }
