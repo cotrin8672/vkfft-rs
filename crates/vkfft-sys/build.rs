@@ -9,6 +9,15 @@ use std::path::{Path, PathBuf};
 use std::env;
 use glob::glob;
 
+#[cfg(target_os = "windows")]
+const BINDGEN_FILENAME: &str = "src/bindings_win.rs";
+
+#[cfg(target_os = "linux")]
+const BINDGEN_FILENAME: &str = "src/bindings_linux.rs";
+
+#[cfg(target_os = "macos")]
+const BINDGEN_FILENAME: &str = "src/bindings_mac.rs";
+
 //from https://github.com/SnowflakePowered/glslang-rs/blob/master/glslang-sys/build.rs
 pub fn add_subdirectory(build: &mut cc::Build, directory: &str) {
   for entry in
@@ -193,7 +202,7 @@ fn build_vkfft() -> Result<(), Box<dyn Error>>{
   build.compile("vkfft");
 
 
-  let bindings_path = Path::new("src/bindings.rs");
+  let bindings_path = Path::new(BINDGEN_FILENAME);
 
   if !bindings_path.exists() {
     let bindings = gen_wrapper(&rw, &defines, &include_dirs)?;
