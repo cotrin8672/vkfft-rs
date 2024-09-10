@@ -13,4 +13,8 @@ To see an example, which exhibits the data layout of the buffers for a 1D comple
 cargo run --example simple
 ```
 
-The required libraries should now be built automatically by cargo. Vulkan must be installed on your system, with libvulkan available for linking.
+The required libraries should now be built automatically by cargo, except for Vulkan itself. 
+
+ - On Linux: You should install libvulkan using your system's package manager (on most systems, it will already be present).
+ - On Mac and Windows: Install the [Vulkan SDK from LunarG](https://vulkan.lunarg.com). 
+ 

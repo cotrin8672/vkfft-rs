@@ -1,15 +1,10 @@
 use std::{error::Error, sync::Arc};
 use vkfft::config::Config;
 use vkfft::context::{Context, FftType};
-use vulkano::buffer::{BufferUsage, CpuAccessibleBuffer};
-use vulkano::instance::{Instance, InstanceExtensions};
-
-const DEFAULT_BUFFER_USAGE: BufferUsage = BufferUsage {
-  storage_buffer: true,
-  transfer_source: true,
-  transfer_destination: true,
-  ..BufferUsage::none()
-};
+use vulkano::buffer::{subbuffer::Subbuffer, Buffer};
+use vulkano::buffer::{BufferCreateInfo, BufferUsage};
+use vulkano::instance::{Instance, InstanceCreateInfo};
+use vulkano::memory::allocator::{AllocationCreateInfo, MemoryTypeFilter};
 
 fn real_to_complex_2d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>> {
   let k_x_coord = 2;
@@ -22,12 +17,20 @@ fn real_to_complex_2d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>> {
   let size = [8, 8];
   let size_fft = [2 * (size[0] / 2 + 1), size[1]];
   let buffer_size = size_fft[0] * size_fft[1];
-
-  let data = CpuAccessibleBuffer::from_iter(
-    context.device.clone(),
-    DEFAULT_BUFFER_USAGE,
-    false,
-    (0..buffer_size).map(|_| 0.0f32),
+  let allocator = Arc::new(
+    vulkano::memory::allocator::StandardMemoryAllocator::new_default(context.device.clone()),
+  );
+  let data = Buffer::from_iter(
+    allocator,
+    BufferCreateInfo {
+      usage: BufferUsage::TRANSFER_DST,
+      ..Default::default()
+    },
+    AllocationCreateInfo {
+      memory_type_filter: MemoryTypeFilter::PREFER_HOST | MemoryTypeFilter::HOST_RANDOM_ACCESS,
+      ..Default::default()
+    },
+    (0..buffer_size as u32).map(|_| 0.0f32),
   )?;
 
   let k_x = k_x_coord as f32 * std::f32::consts::TAU / size[0] as f32;
@@ -41,8 +44,8 @@ fn real_to_complex_2d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>> {
   print_matrix_buffer(&data, &size);
 
   let config_builder = Config::builder()
-    .input_buffer(data.clone())
-    .buffer(data.clone())
+    .input_buffer(data.buffer().clone())
+    .buffer(data.buffer().clone())
     .input_formatted(true)
     .r2c()
     .dim(&size);
@@ -67,11 +70,20 @@ fn complex_to_complex_1d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>>
   let buffer_size = 2 * size[0];
   let printing_size = [buffer_size, 1];
 
-  let data = CpuAccessibleBuffer::from_iter(
-    context.device.clone(),
-    DEFAULT_BUFFER_USAGE,
-    false,
-    (0..buffer_size).map(|_| 0.0f32),
+  let allocator = Arc::new(
+    vulkano::memory::allocator::StandardMemoryAllocator::new_default(context.device.clone()),
+  );
+  let data = Buffer::from_iter(
+    allocator,
+    BufferCreateInfo {
+      usage: BufferUsage::TRANSFER_DST,
+      ..Default::default()
+    },
+    AllocationCreateInfo {
+      memory_type_filter: MemoryTypeFilter::PREFER_HOST | MemoryTypeFilter::HOST_RANDOM_ACCESS,
+      ..Default::default()
+    },
+    (0..buffer_size as u32).map(|_| 0.0f32),
   )?;
 
   let k_x = k_coord as f32 * std::f32::consts::TAU / size[0] as f32;
@@ -87,8 +99,8 @@ fn complex_to_complex_1d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>>
   print_complex_matrix_buffer(&data, &printing_size);
 
   let config_builder = Config::builder()
-    .input_buffer(data.clone())
-    .buffer(data.clone())
+    .input_buffer(data.buffer().clone())
+    .buffer(data.buffer().clone())
     .dim(&size);
 
   context.single_fft(config_builder, FftType::Forward)?;
@@ -97,8 +109,8 @@ fn complex_to_complex_1d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>>
   print_complex_matrix_buffer(&data, &printing_size);
 
   let config_builder = Config::builder()
-    .input_buffer(data.clone())
-    .buffer(data.clone())
+    .input_buffer(data.buffer().clone())
+    .buffer(data.buffer().clone())
     .normalize()
     .dim(&size);
 
@@ -114,16 +126,9 @@ fn complex_to_complex_1d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>>
 fn main() -> Result<(), Box<dyn Error>> {
   println!("VkFFT version: {}", vkfft::version());
 
-  let instance = Instance::new(
-    None,
-    vulkano::Version { major: 14, minor: 0, patch: 0 },
-    &InstanceExtensions {
-      ext_debug_utils: false,
-      ..InstanceExtensions::none()
-    },
-    None,
-  )?;
-
+  let library = vulkano::VulkanLibrary::new().expect("no local Vulkan library/DLL");
+  let instance =
+    Instance::new(library, InstanceCreateInfo::default()).expect("failed to create instance");
   complex_to_complex_1d(&instance)?;
   real_to_complex_2d(&instance)?;
 
@@ -131,7 +136,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 /// Prints a 2D matrix contained in a Vulkano buffer
-fn print_matrix_buffer(buffer: &Arc<CpuAccessibleBuffer<[f32]>>, shape: &[u32; 2]) {
+fn print_matrix_buffer(buffer: &Subbuffer<[f32]>, shape: &[u32; 2]) {
   buffer
     .read()
     .unwrap()
@@ -150,7 +155,7 @@ fn print_matrix_buffer(buffer: &Arc<CpuAccessibleBuffer<[f32]>>, shape: &[u32; 2
 /// format (re, im) (re, im) ...
 /// It is assumed that the even indicies are the real parts, and odd indicies are
 /// the imaginary parts.
-fn print_complex_matrix_buffer(buffer: &Arc<CpuAccessibleBuffer<[f32]>>, shape: &[u32; 2]) {
+fn print_complex_matrix_buffer(buffer: &Subbuffer<[f32]>, shape: &[u32; 2]) {
   buffer
     .read()
     .unwrap()

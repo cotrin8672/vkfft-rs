@@ -1,15 +1,15 @@
 use std::sync::Arc;
 
 use error::check_error;
-use vulkano::{buffer::BufferAccess, Handle, VulkanObject};
+use vulkano::{buffer::Buffer, Handle, VulkanObject};
 
 use crate::{
   config::{Config, ConfigGuard},
   error,
 };
 
+use ash::vk;
 use std::pin::Pin;
-use ash::vk as vk;
 
 use std::ptr::addr_of_mut;
 
@@ -36,11 +36,11 @@ pub enum LaunchError {
 
 pub struct LaunchParamsBuilder {
   command_buffer: Option<vk::CommandBuffer>,
-  buffer: Option<Arc<dyn BufferAccess>>,
-  temp_buffer: Option<Arc<dyn BufferAccess>>,
-  input_buffer: Option<Arc<dyn BufferAccess>>,
-  output_buffer: Option<Arc<dyn BufferAccess>>,
-  kernel: Option<Arc<dyn BufferAccess>>,
+  buffer: Option<Arc<Buffer>>,
+  temp_buffer: Option<Arc<Buffer>>,
+  input_buffer: Option<Arc<Buffer>>,
+  output_buffer: Option<Arc<Buffer>>,
+  kernel: Option<Arc<Buffer>>,
 }
 
 impl LaunchParamsBuilder {
@@ -57,33 +57,33 @@ impl LaunchParamsBuilder {
 
   pub fn command_buffer<C>(mut self, command_buffer: &C) -> Self
   where
-    C: VulkanObject<Object = vk::CommandBuffer>,
+    C: VulkanObject<Handle = vk::CommandBuffer>,
   {
-    self.command_buffer = Some(command_buffer.internal_object());
+    self.command_buffer = Some(command_buffer.handle());
     self
   }
 
-  pub fn buffer(mut self, buffer: Arc<dyn BufferAccess>) -> Self {
+  pub fn buffer(mut self, buffer: Arc<Buffer>) -> Self {
     self.buffer = Some(buffer);
     self
   }
 
-  pub fn temp_buffer(mut self, temp_buffer: Arc<dyn BufferAccess>) -> Self {
+  pub fn temp_buffer(mut self, temp_buffer: Arc<Buffer>) -> Self {
     self.temp_buffer = Some(temp_buffer);
     self
   }
 
-  pub fn input_buffer(mut self, input_buffer: Arc<dyn BufferAccess>) -> Self {
+  pub fn input_buffer(mut self, input_buffer: Arc<Buffer>) -> Self {
     self.input_buffer = Some(input_buffer);
     self
   }
 
-  pub fn output_buffer(mut self, output_buffer: Arc<dyn BufferAccess>) -> Self {
+  pub fn output_buffer(mut self, output_buffer: Arc<Buffer>) -> Self {
     self.output_buffer = Some(output_buffer);
     self
   }
 
-  pub fn kernel(mut self, kernel: Arc<dyn BufferAccess>) -> Self {
+  pub fn kernel(mut self, kernel: Arc<Buffer>) -> Self {
     self.kernel = Some(kernel);
     self
   }
@@ -118,19 +118,19 @@ pub(crate) struct LaunchParamsGuard {
 
 pub struct LaunchParams {
   pub command_buffer: vk::CommandBuffer,
-  pub buffer: Option<Arc<dyn BufferAccess>>,
-  pub temp_buffer: Option<Arc<dyn BufferAccess>>,
-  pub input_buffer: Option<Arc<dyn BufferAccess>>,
-  pub output_buffer: Option<Arc<dyn BufferAccess>>,
-  pub kernel: Option<Arc<dyn BufferAccess>>,
+  pub buffer: Option<Arc<Buffer>>,
+  pub temp_buffer: Option<Arc<Buffer>>,
+  pub input_buffer: Option<Arc<Buffer>>,
+  pub output_buffer: Option<Arc<Buffer>>,
+  pub kernel: Option<Arc<Buffer>>,
 }
 
 impl LaunchParams {
   fn buffer_object<B>(buffer: B) -> u64
   where
-    B: AsRef<dyn BufferAccess>,
+    B: AsRef<Buffer>,
   {
-    buffer.as_ref().inner().buffer.internal_object().as_raw()
+    buffer.as_ref().handle().as_raw()
   }
 
   pub(crate) fn as_sys(&self) -> Pin<Box<LaunchParamsGuard>> {

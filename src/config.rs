@@ -3,12 +3,12 @@ use std::sync::Arc;
 use derive_more::{Display, Error};
 use std::pin::Pin;
 use vulkano::{
-  buffer::BufferAccess,
-  command_buffer::pool::UnsafeCommandPool,
-  device::{Device, Queue},
+  buffer::Buffer,
+  command_buffer::pool::CommandPool,
   device::physical::PhysicalDevice,
-  sync::Fence,
-  SynchronizedVulkanObject, VulkanObject,
+  device::{Device, Queue},
+  sync::fence::Fence,
+  VulkanObject,
 };
 
 use std::ptr::addr_of_mut;
@@ -27,16 +27,16 @@ pub struct ConfigBuilder<'a> {
   fft_dim: u32,
   size: [u32; 4usize],
 
-  physical_device: Option<PhysicalDevice<'a>>,
+  physical_device: Option<Arc<PhysicalDevice>>,
   device: Option<Arc<Device>>,
   queue: Option<Arc<Queue>>,
   fence: Option<&'a Fence>,
-  command_pool: Option<Arc<UnsafeCommandPool>>,
-  buffer: Option<BufferDesc>,
-  input_buffer: Option<BufferDesc>,
-  output_buffer: Option<BufferDesc>,
-  temp_buffer: Option<BufferDesc>,
-  kernel: Option<BufferDesc>,
+  command_pool: Option<Arc<CommandPool>>,
+  buffer: Option<Arc<Buffer>>,
+  input_buffer: Option<Arc<Buffer>>,
+  output_buffer: Option<Arc<Buffer>>,
+  temp_buffer: Option<Arc<Buffer>>,
+  kernel: Option<Arc<Buffer>>,
   normalize: bool,
   zero_padding: [bool; 3usize],
   zeropad_left: [u32; 4usize],
@@ -104,7 +104,7 @@ impl<'a> ConfigBuilder<'a> {
     self
   }
 
-  pub fn physical_device(mut self, physical_device: PhysicalDevice<'a>) -> Self {
+  pub fn physical_device(mut self, physical_device: Arc<PhysicalDevice>) -> Self {
     self.physical_device = Some(physical_device);
     self
   }
@@ -119,7 +119,7 @@ impl<'a> ConfigBuilder<'a> {
     self
   }
 
-  pub fn command_pool(mut self, command_pool: Arc<UnsafeCommandPool>) -> Self {
+  pub fn command_pool(mut self, command_pool: Arc<CommandPool>) -> Self {
     self.command_pool = Some(command_pool);
     self
   }
@@ -131,7 +131,7 @@ impl<'a> ConfigBuilder<'a> {
 
   pub fn buffer<B>(mut self, buffer: B) -> Self
   where
-    B: Into<BufferDesc>,
+    B: Into<Arc<Buffer>>,
   {
     self.buffer = Some(buffer.into());
     self
@@ -139,7 +139,7 @@ impl<'a> ConfigBuilder<'a> {
 
   pub fn temp_buffer<B>(mut self, temp_buffer: B) -> Self
   where
-    B: Into<BufferDesc>,
+    B: Into<Arc<Buffer>>,
   {
     self.temp_buffer = Some(temp_buffer.into());
     self
@@ -147,7 +147,7 @@ impl<'a> ConfigBuilder<'a> {
 
   pub fn input_buffer<B>(mut self, input_buffer: B) -> Self
   where
-    B: Into<BufferDesc>,
+    B: Into<Arc<Buffer>>,
   {
     self.input_buffer = Some(input_buffer.into());
     self
@@ -155,7 +155,7 @@ impl<'a> ConfigBuilder<'a> {
 
   pub fn output_buffer<B>(mut self, output_buffer: B) -> Self
   where
-    B: Into<BufferDesc>,
+    B: Into<Arc<Buffer>>,
   {
     self.output_buffer = Some(output_buffer.into());
     self
@@ -163,7 +163,7 @@ impl<'a> ConfigBuilder<'a> {
 
   pub fn kernel<B>(mut self, kernel: B) -> Self
   where
-    B: Into<BufferDesc>,
+    B: Into<Arc<Buffer>>,
   {
     self.kernel = Some(kernel.into());
     self
@@ -342,64 +342,21 @@ pub enum Precision {
   HalfMemory,
 }
 
-pub enum BufferDesc {
-  Buffer(Arc<dyn BufferAccess>),
-  BufferSize(usize),
-}
-
-impl<T> From<Arc<T>> for BufferDesc
-where
-  T: 'static + BufferAccess,
-{
-  fn from(value: Arc<T>) -> Self {
-    Self::Buffer(value as Arc<dyn BufferAccess>)
-  }
-}
-
-impl From<usize> for BufferDesc {
-  fn from(value: usize) -> Self {
-    Self::BufferSize(value)
-  }
-}
-
-impl BufferDesc {
-  pub fn size(&self) -> usize {
-    match self {
-      Self::Buffer(b) => b.size() as usize,
-      Self::BufferSize(b) => *b,
-    }
-  }
-
-  pub fn as_buffer(&self) -> Option<&Arc<dyn BufferAccess>> {
-    match self {
-      Self::Buffer(b) => Some(b),
-      Self::BufferSize(_) => None,
-    }
-  }
-
-  pub fn as_buffer_size(&self) -> Option<&usize> {
-    match self {
-      Self::Buffer(_) => None,
-      Self::BufferSize(b) => Some(b),
-    }
-  }
-}
-
 pub struct Config<'a> {
   pub fft_dim: u32,
   pub size: [u32; 4usize],
 
-  pub physical_device: PhysicalDevice<'a>,
+  pub physical_device: Arc<PhysicalDevice>,
   pub device: Arc<Device>,
   pub queue: Arc<Queue>,
   pub fence: &'a Fence,
-  pub command_pool: Arc<UnsafeCommandPool>,
+  pub command_pool: Arc<CommandPool>,
 
-  pub buffer: Option<BufferDesc>,
-  pub input_buffer: Option<BufferDesc>,
-  pub output_buffer: Option<BufferDesc>,
-  pub temp_buffer: Option<BufferDesc>,
-  pub kernel: Option<BufferDesc>,
+  pub buffer: Option<Arc<Buffer>>,
+  pub input_buffer: Option<Arc<Buffer>>,
+  pub output_buffer: Option<Arc<Buffer>>,
+  pub temp_buffer: Option<Arc<Buffer>>,
+  pub kernel: Option<Arc<Buffer>>,
 
   /// Normalize inverse transform
   pub normalize: bool,
@@ -459,12 +416,12 @@ pub enum ConfigError {
 pub(crate) struct KeepAlive {
   pub device: Arc<Device>,
   pub queue: Arc<Queue>,
-  pub command_pool: Arc<UnsafeCommandPool>,
-  pub buffer: Option<Arc<dyn BufferAccess>>,
-  pub input_buffer: Option<Arc<dyn BufferAccess>>,
-  pub output_buffer: Option<Arc<dyn BufferAccess>>,
-  pub temp_buffer: Option<Arc<dyn BufferAccess>>,
-  pub kernel: Option<Arc<dyn BufferAccess>>,
+  pub command_pool: Arc<CommandPool>,
+  pub buffer: Option<Arc<Buffer>>,
+  pub input_buffer: Option<Arc<Buffer>>,
+  pub output_buffer: Option<Arc<Buffer>>,
+  pub temp_buffer: Option<Arc<Buffer>>,
+  pub kernel: Option<Arc<Buffer>>,
 }
 
 #[repr(C)]
@@ -494,22 +451,22 @@ impl<'a> Config<'a> {
   }
 
   pub fn buffer_size(&self) -> usize {
-    self.buffer.as_ref().map(|b| b.size()).unwrap_or(0)
+    self.buffer.as_ref().map(|b| b.size() as usize).unwrap_or(0)
   }
 
-  pub fn buffer(&self) -> Option<&BufferDesc> {
+  pub fn buffer(&self) -> Option<&Arc<Buffer>> {
     self.buffer.as_ref()
   }
 
-  pub fn temp_buffer(&self) -> Option<&BufferDesc> {
+  pub fn temp_buffer(&self) -> Option<&Arc<Buffer>> {
     self.temp_buffer.as_ref()
   }
 
-  pub fn input_buffer(&self) -> Option<&BufferDesc> {
+  pub fn input_buffer(&self) -> Option<&Arc<Buffer>> {
     self.input_buffer.as_ref()
   }
 
-  pub fn output_buffer(&self) -> Option<&BufferDesc> {
+  pub fn output_buffer(&self) -> Option<&Arc<Buffer>> {
     self.output_buffer.as_ref()
   }
 
@@ -551,78 +508,33 @@ impl<'a> Config<'a> {
     unsafe {
       let keep_alive = KeepAlive {
         device: self.device.clone(),
-        buffer: self
-          .buffer
-          .as_ref()
-          .map(|b| b.as_buffer().cloned())
-          .flatten(),
-        input_buffer: self
-          .input_buffer
-          .as_ref()
-          .map(|b| b.as_buffer().cloned())
-          .flatten(),
-        output_buffer: self
-          .output_buffer
-          .as_ref()
-          .map(|b| b.as_buffer().cloned())
-          .flatten(),
-        kernel: self
-          .kernel
-          .as_ref()
-          .map(|b| b.as_buffer().cloned())
-          .flatten(),
+        buffer: self.buffer.as_ref().map(|b| b.clone()),
+        input_buffer: self.input_buffer.as_ref().map(|b| b.clone()),
+        output_buffer: self.output_buffer.as_ref().map(|b| b.clone()),
+        kernel: self.kernel.as_ref().map(|b| b.clone()),
         command_pool: self.command_pool.clone(),
         queue: self.queue.clone(),
-        temp_buffer: self
-          .temp_buffer
-          .as_ref()
-          .map(|b| b.as_buffer().cloned())
-          .flatten(),
+        temp_buffer: self.temp_buffer.as_ref().map(|b| b.clone()),
       };
 
       let mut res = Box::pin(ConfigGuard {
         keep_alive,
         config: zeroed(),
-        physical_device: self.physical_device.internal_object(),
-        device: self.device.internal_object(),
-        queue: *self.queue.internal_object_guard(),
-        command_pool: self.command_pool.internal_object(),
-        fence: self.fence.internal_object(),
+        physical_device: self.physical_device.handle(),
+        device: self.device.handle(),
+        queue: self.queue.handle(),
+        command_pool: self.command_pool.handle(),
+        fence: self.fence.handle(),
         buffer_size: self.buffer.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
         temp_buffer_size: self.temp_buffer.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
         input_buffer_size: self.input_buffer.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
         output_buffer_size: self.output_buffer.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
         kernel_size: self.kernel.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
-        buffer: self
-          .buffer
-          .as_ref()
-          .map(|b| b.as_buffer())
-          .flatten()
-          .map(|b| b.inner().buffer.internal_object()),
-        temp_buffer: self
-          .temp_buffer
-          .as_ref()
-          .map(|b| b.as_buffer())
-          .flatten()
-          .map(|b| b.inner().buffer.internal_object()),
-        input_buffer: self
-          .input_buffer
-          .as_ref()
-          .map(|b| b.as_buffer())
-          .flatten()
-          .map(|b| b.inner().buffer.internal_object()),
-        output_buffer: self
-          .output_buffer
-          .as_ref()
-          .map(|b| b.as_buffer())
-          .flatten()
-          .map(|b| b.inner().buffer.internal_object()),
-        kernel: self
-          .kernel
-          .as_ref()
-          .map(|b| b.as_buffer())
-          .flatten()
-          .map(|b| b.inner().buffer.internal_object()),
+        buffer: self.buffer.as_ref().map(|b| b.handle()),
+        temp_buffer: self.temp_buffer.as_ref().map(|b| b.handle()),
+        input_buffer: self.input_buffer.as_ref().map(|b| b.handle()),
+        output_buffer: self.output_buffer.as_ref().map(|b| b.handle()),
+        kernel: self.kernel.as_ref().map(|b| b.handle()),
       });
 
       res.config.FFTdim = self.fft_dim as u64;

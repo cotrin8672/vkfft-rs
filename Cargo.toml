@@ -11,9 +11,9 @@ description = "Rust bindings for VkFFT"
 
 [dependencies]
 vkfft-sys = { path = "./crates/vkfft-sys", version = "0.2.0" }
-vulkano = "0.28"
+vulkano = "0.34"
 derive_more = "0.99"
-ash = "0.35"
+ash = "0.37"
 
 [dev-dependencies]
 util = { path = "./crates/util" }
