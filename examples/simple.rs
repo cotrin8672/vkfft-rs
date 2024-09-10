@@ -1,37 +1,20 @@
-use std::{error::Error, sync::Arc};
+use std::error::Error;
 use vkfft::config::Config;
 use vkfft::context::{Context, FftType};
-use vulkano::buffer::{subbuffer::Subbuffer, Buffer};
-use vulkano::buffer::{BufferCreateInfo, BufferUsage};
+use vulkano::buffer::subbuffer::Subbuffer;
 use vulkano::instance::{Instance, InstanceCreateInfo};
-use vulkano::memory::allocator::{AllocationCreateInfo, MemoryTypeFilter};
 
-fn real_to_complex_2d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>> {
+fn real_to_complex_2d(context: &Context) -> Result<(), Box<dyn Error>> {
   let k_x_coord = 2;
   let k_y_coord = 3;
   println!("------------");
   println!("Performing 2D real-to-complex FFT. The plane wave should localize to position [{k_x_coord}, {k_y_coord}]:");
 
-  let mut context = Context::new(instance)?;
-
   let size = [8, 8];
   let size_fft = [2 * (size[0] / 2 + 1), size[1]];
   let buffer_size = size_fft[0] * size_fft[1];
-  let allocator = Arc::new(
-    vulkano::memory::allocator::StandardMemoryAllocator::new_default(context.device.clone()),
-  );
-  let data = Buffer::from_iter(
-    allocator,
-    BufferCreateInfo {
-      usage: BufferUsage::TRANSFER_DST,
-      ..Default::default()
-    },
-    AllocationCreateInfo {
-      memory_type_filter: MemoryTypeFilter::PREFER_HOST | MemoryTypeFilter::HOST_RANDOM_ACCESS,
-      ..Default::default()
-    },
-    (0..buffer_size as u32).map(|_| 0.0f32),
-  )?;
+
+  let data = context.new_buffer_from_iter((0..buffer_size as u32).map(|_| 0.0f32))?;
 
   let k_x = k_x_coord as f32 * std::f32::consts::TAU / size[0] as f32;
   let k_y = k_y_coord as f32 * std::f32::consts::TAU / size[1] as f32;
@@ -57,34 +40,18 @@ fn real_to_complex_2d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>> {
   Ok(())
 }
 
-fn complex_to_complex_1d(instance: &Arc<Instance>) -> Result<(), Box<dyn Error>> {
+fn complex_to_complex_1d(context: &Context) -> Result<(), Box<dyn Error>> {
   let k_coord = 2;
   println!("------------");
   println!(
     "Performing 1D complex-to-complex FFT. The plane wave should localize to position [{k_coord}]:"
   );
 
-  let mut context = Context::new(instance)?;
-
   let size = [8];
   let buffer_size = 2 * size[0];
   let printing_size = [buffer_size, 1];
 
-  let allocator = Arc::new(
-    vulkano::memory::allocator::StandardMemoryAllocator::new_default(context.device.clone()),
-  );
-  let data = Buffer::from_iter(
-    allocator,
-    BufferCreateInfo {
-      usage: BufferUsage::TRANSFER_DST,
-      ..Default::default()
-    },
-    AllocationCreateInfo {
-      memory_type_filter: MemoryTypeFilter::PREFER_HOST | MemoryTypeFilter::HOST_RANDOM_ACCESS,
-      ..Default::default()
-    },
-    (0..buffer_size as u32).map(|_| 0.0f32),
-  )?;
+  let data = context.new_buffer_from_iter((0..buffer_size as u32).map(|_| 0.0f32))?;
 
   let k_x = k_coord as f32 * std::f32::consts::TAU / size[0] as f32;
   data.write()?.iter_mut().enumerate().for_each(|(i, val)| {
@@ -129,8 +96,9 @@ fn main() -> Result<(), Box<dyn Error>> {
   let library = vulkano::VulkanLibrary::new().expect("no local Vulkan library/DLL");
   let instance =
     Instance::new(library, InstanceCreateInfo::default()).expect("failed to create instance");
-  complex_to_complex_1d(&instance)?;
-  real_to_complex_2d(&instance)?;
+  let context = Context::new(&instance)?;
+  complex_to_complex_1d(&context)?;
+  real_to_complex_2d(&context)?;
 
   Ok(())
 }

@@ -4,7 +4,7 @@ use crate::{
 };
 
 use std::sync::Arc;
-use vulkano::command_buffer::sys::UnsafeCommandBuffer;
+use vulkano::{buffer::{AllocateBufferError, Buffer, BufferContents, BufferCreateInfo, BufferUsage, Subbuffer}, command_buffer::sys::UnsafeCommandBuffer, memory::allocator::{AllocationCreateInfo, GenericMemoryAllocator, MemoryAllocator, MemoryTypeFilter}, Validated};
 use vulkano::device::{physical::PhysicalDevice, Device, Queue};
 use vulkano::{
   command_buffer::{
@@ -32,6 +32,7 @@ pub struct Context<'a> {
   pub device: Arc<Device>,
   pub queue: Arc<Queue>,
   pub pool: Arc<CommandPool>,
+  pub allocator: Arc<dyn MemoryAllocator>,
   pub fence: Fence,
 }
 
@@ -75,7 +76,9 @@ impl<'a> Context<'a> {
       },
     )?);
     let fence = Fence::new(device.clone(), FenceCreateInfo::default())?;
-
+    let allocator = Arc::new(
+      vulkano::memory::allocator::StandardMemoryAllocator::new_default(device.clone()),
+    );
     Ok(Self {
       instance,
       physical: physical.clone(),
@@ -83,11 +86,30 @@ impl<'a> Context<'a> {
       device,
       pool,
       fence,
+      allocator
     })
   }
-
+  pub fn new_buffer_from_iter<T,I>(&self, iter: I) -> Result<Subbuffer<[T]>, Validated<AllocateBufferError>> 
+  where
+    T: BufferContents,
+    I: IntoIterator<Item = T>,
+    I::IntoIter: ExactSizeIterator,{
+    Buffer::from_iter(
+      self.allocator.clone(),
+      BufferCreateInfo {
+        usage: BufferUsage::TRANSFER_DST,
+        ..Default::default()
+      },
+      AllocationCreateInfo {
+        memory_type_filter: MemoryTypeFilter::PREFER_HOST | MemoryTypeFilter::HOST_RANDOM_ACCESS,
+        ..Default::default()
+      },
+      iter,
+    )
+  }
+  
   pub fn submit(
-    &mut self,
+    &self,
     command_buffer: UnsafeCommandBuffer,
   ) -> Result<(), Box<dyn std::error::Error>> {
     let fns = self.device.fns();
@@ -122,7 +144,7 @@ impl<'a> Context<'a> {
   }
 
   pub fn single_fft(
-    &mut self,
+    &self,
     config_builder: ConfigBuilder,
     fft_type: FftType,
   ) -> Result<(), Box<dyn std::error::Error>> {
