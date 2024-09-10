@@ -101,20 +101,22 @@ impl<'a> Context<'a> {
       p_command_buffer_infos: &command_buffer_submit_info,
       ..Default::default()
     };
-    let submit_result = unsafe {
-       (fns.v1_3.queue_submit2)(
-        self.queue.handle(),
-        1u32,
-        &submit_info_vk,
-        self.fence.handle(),
-      )
-    };
-    if submit_result != ash_Result::SUCCESS {
-      println!("Submission to Vulkan queue failed with result {:?}", submit_result);
-      panic!("Vulkan in non-handled state, panicking.");
-    }
-    self.fence.wait(None)?;
-    self.fence.reset()?;
+    self.queue.with(|_| {
+      let submit_result = unsafe {
+        (fns.v1_3.queue_submit2)(
+         self.queue.handle(),
+         1u32,
+         &submit_info_vk,
+         self.fence.handle(),
+       )
+     };
+     if submit_result != ash_Result::SUCCESS {
+       println!("Submission to Vulkan queue failed with result {:?}", submit_result);
+       panic!("Vulkan in non-handled state, panicking.");
+     }
+     self.fence.wait(None).unwrap();
+     self.fence.reset().unwrap();
+    });
     
     Ok(())
   }
