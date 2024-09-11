@@ -4,7 +4,7 @@ use crate::{
 };
 
 use std::sync::Arc;
-use vulkano::{buffer::{AllocateBufferError, Buffer, BufferContents, BufferCreateInfo, BufferUsage, Subbuffer}, command_buffer::sys::UnsafeCommandBuffer, memory::allocator::{AllocationCreateInfo, GenericMemoryAllocator, MemoryAllocator, MemoryTypeFilter}, Validated};
+use vulkano::{buffer::{AllocateBufferError, Buffer, BufferContents, BufferCreateInfo, BufferUsage, Subbuffer}, command_buffer::sys::UnsafeCommandBuffer, memory::allocator::{AllocationCreateInfo, MemoryAllocator, MemoryTypeFilter}, Validated};
 use vulkano::device::{physical::PhysicalDevice, Device, Queue};
 use vulkano::{
   command_buffer::{
@@ -118,28 +118,72 @@ impl<'a> Context<'a> {
       device_mask: 0u32,
       ..Default::default()
     };
-    let submit_info_vk = ash::vk::SubmitInfo2 {
-      command_buffer_info_count: 1u32,
-      p_command_buffer_infos: &command_buffer_submit_info,
-      ..Default::default()
-    };
-    self.queue.with(|_| {
-      let submit_result = unsafe {
-        (fns.v1_3.queue_submit2)(
-         self.queue.handle(),
-         1u32,
-         &submit_info_vk,
-         self.fence.handle(),
-       )
-     };
-     if submit_result != ash_Result::SUCCESS {
-       println!("Submission to Vulkan queue failed with result {:?}", submit_result);
-       panic!("Vulkan in non-handled state, panicking.");
-     }
-     self.fence.wait(None).unwrap();
-     self.fence.reset().unwrap();
-    });
-    
+    if self.device.enabled_features().synchronization2{
+      let submit_info_vk = ash::vk::SubmitInfo2 {
+        command_buffer_info_count: 1u32,
+        p_command_buffer_infos: &command_buffer_submit_info,
+        ..Default::default()
+      };
+      if self.device.api_version() >= vulkano::Version::V1_3 {
+        self.queue.with(|_| {
+          let submit_result = unsafe {
+            (fns.v1_3.queue_submit2)(
+             self.queue.handle(),
+             1u32,
+             &submit_info_vk,
+             self.fence.handle(),
+           )
+         };
+         if submit_result != ash_Result::SUCCESS {
+           println!("Submission to Vulkan queue failed with result {:?}", submit_result);
+           panic!("Vulkan in non-handled state, panicking.");
+         }
+         self.fence.wait(None).unwrap();
+         self.fence.reset().unwrap();
+        });
+      }
+      else{
+        self.queue.with(|_| {
+          let submit_result = unsafe {
+            (fns.khr_synchronization2.queue_submit2_khr)(
+             self.queue.handle(),
+             1u32,
+             &submit_info_vk,
+             self.fence.handle(),
+           )
+         };
+         if submit_result != ash_Result::SUCCESS {
+           println!("Submission to Vulkan queue failed with result {:?}", submit_result);
+           panic!("Vulkan in non-handled state, panicking.");
+         }
+         self.fence.wait(None).unwrap();
+         self.fence.reset().unwrap();
+        });
+      }
+    }
+    else{
+      let submit_info_vk = ash::vk::SubmitInfo {
+        command_buffer_count: 1u32,
+        p_command_buffers: &command_buffer_submit_info.command_buffer,
+        ..Default::default()
+      };
+      self.queue.with(|_| {
+        let submit_result = unsafe {
+          (fns.v1_0.queue_submit)(
+           self.queue.handle(),
+           1u32,
+           &submit_info_vk,
+           self.fence.handle(),
+         )
+       };
+       if submit_result != ash_Result::SUCCESS {
+         println!("Submission to Vulkan queue failed with result {:?}", submit_result);
+         panic!("Vulkan in non-handled state, panicking.");
+       }
+       self.fence.wait(None).unwrap();
+       self.fence.reset().unwrap();
+      });
+    }
     Ok(())
   }
 

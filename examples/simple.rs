@@ -2,7 +2,7 @@ use std::error::Error;
 use vkfft::config::Config;
 use vkfft::context::{Context, FftType};
 use vulkano::buffer::subbuffer::Subbuffer;
-use vulkano::instance::{Instance, InstanceCreateInfo};
+use vulkano::instance::{Instance, InstanceCreateFlags, InstanceCreateInfo, InstanceExtensions};
 
 fn real_to_complex_2d(context: &Context) -> Result<(), Box<dyn Error>> {
   let k_x_coord = 2;
@@ -95,7 +95,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
   let library = vulkano::VulkanLibrary::new().expect("no local Vulkan library/DLL");
   let instance =
-    Instance::new(library, InstanceCreateInfo::default()).expect("failed to create instance");
+    Instance::new(library, 
+      InstanceCreateInfo {
+        flags: InstanceCreateFlags::ENUMERATE_PORTABILITY, 
+        enabled_extensions: InstanceExtensions{khr_get_physical_device_properties2: true, khr_portability_enumeration: true, ..Default::default()},
+        ..Default::default()}).expect("failed to create instance");
   let context = Context::new(&instance)?;
   complex_to_complex_1d(&context)?;
   real_to_complex_2d(&context)?;
