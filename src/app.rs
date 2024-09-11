@@ -116,6 +116,7 @@ pub(crate) struct LaunchParamsGuard {
   pub(crate) kernel: Option<u64>,
 }
 
+#[derive(Clone)]
 pub struct LaunchParams {
   pub command_buffer: vk::CommandBuffer,
   pub buffer: Option<Arc<Buffer>>,
@@ -132,7 +133,12 @@ impl LaunchParams {
   {
     buffer.as_ref().handle().as_raw()
   }
+  // pub fn duplicate(&self) -> Self{
+  //   LaunchParams{
+  //     command_buffer: self.command_buffer.clone(),
 
+  //   }
+  // }
   pub(crate) fn as_sys(&self) -> Pin<Box<LaunchParamsGuard>> {
     use std::mem::{transmute, zeroed};
 

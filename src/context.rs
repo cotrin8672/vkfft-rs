@@ -3,7 +3,7 @@ use crate::{
   config::ConfigBuilder,
 };
 
-use std::sync::Arc;
+use std::{pin::Pin, sync::Arc};
 use vulkano::{buffer::{AllocateBufferError, Buffer, BufferContents, BufferCreateInfo, BufferUsage, Subbuffer}, command_buffer::sys::UnsafeCommandBuffer, memory::allocator::{AllocationCreateInfo, MemoryAllocator, MemoryTypeFilter}, Validated};
 use vulkano::device::{physical::PhysicalDevice, Device, Queue};
 use vulkano::{
@@ -186,12 +186,7 @@ impl<'a> Context<'a> {
     }
     Ok(())
   }
-
-  pub fn single_fft(
-    &self,
-    config_builder: ConfigBuilder,
-    fft_type: FftType,
-  ) -> Result<(), Box<dyn std::error::Error>> {
+  pub fn start_fft_chain(&self, config_builder: ConfigBuilder, fft_type: FftType) -> Result<(Pin<Box<App>>, LaunchParams, UnsafeCommandBufferBuilder), Box<dyn std::error::Error>>{
     let command_buffer_allocator = StandardCommandBufferAllocator::new(
       self.device.clone(),
       StandardCommandBufferAllocatorCreateInfo::default(),
@@ -221,8 +216,39 @@ impl<'a> Context<'a> {
       FftType::Forward => app.forward(&mut params)?,
       FftType::Inverse => app.inverse(&mut params)?,
     }
-    let command_buffer = builder.build()?;
-    self.submit(command_buffer)?;
+    Ok((app, params, builder))
+  }
+  pub fn chain_fft_with_app(&self, mut app: Pin<Box<App>>, mut params: LaunchParams, fft_type: FftType) -> Result<(Pin<Box<App>>, LaunchParams), Box<dyn std::error::Error>>{
+    match fft_type {
+      FftType::Forward => app.forward(&mut params)?,
+      FftType::Inverse => app.inverse(&mut params)?,
+    }
+    Ok((app, params))
+  }
+  pub fn chain_fft_with_config(&self, config_builder: ConfigBuilder, builder: UnsafeCommandBufferBuilder, fft_type: FftType) -> Result<(Pin<Box<App>>, LaunchParams, UnsafeCommandBufferBuilder), Box<dyn std::error::Error>>{
+
+    let mut params = LaunchParams::builder().command_buffer(&builder).build()?;
+    let config = config_builder
+      .physical_device(self.physical.clone())
+      .device(self.device.clone())
+      .fence(&self.fence)
+      .queue(self.queue.clone())
+      .command_pool(self.pool.clone())
+      .build()?;
+    let mut app = App::new(config)?;
+    match fft_type {
+      FftType::Forward => app.forward(&mut params)?,
+      FftType::Inverse => app.inverse(&mut params)?,
+    }
+    Ok((app, params, builder))
+  }
+  pub fn single_fft(
+    &self,
+    config_builder: ConfigBuilder,
+    fft_type: FftType,
+  ) -> Result<(), Box<dyn std::error::Error>> {
+    let (_app,_params, builder) = self.start_fft_chain(config_builder, fft_type)?;
+    self.submit(builder.build()?)?;
     Ok(())
   }
 }

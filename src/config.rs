@@ -475,7 +475,7 @@ impl<'a> Config<'a> {
   }
 
   pub fn symmetric_kernel(&self) -> bool {
-    self.kernel_convolution
+    self.symmetric_kernel
   }
 
   pub fn convolution(&self) -> bool {
@@ -598,7 +598,7 @@ impl<'a> Config<'a> {
 
       res.config.fft_zeropad_left = self.zeropad_left.map(u64::from);
       res.config.fft_zeropad_right = self.zeropad_right.map(u64::from);
-
+      res.config.performConvolution = self.convolution.into();
       res.config.kernelConvolution = self.kernel_convolution.into();
       res.config.performR2C = self.r2c.into();
       res.config.coordinateFeatures = self.coordinate_features as u64;
