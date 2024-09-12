@@ -9,14 +9,7 @@ use std::path::{Path, PathBuf};
 use std::env;
 use glob::glob;
 
-#[cfg(target_os = "windows")]
-const BINDGEN_FILENAME: &str = "src/bindings_win.rs";
-
-#[cfg(target_os = "linux")]
-const BINDGEN_FILENAME: &str = "src/bindings_linux.rs";
-
-#[cfg(target_os = "macos")]
-const BINDGEN_FILENAME: &str = "src/bindings_mac.rs";
+const BINDGEN_FILENAME: &str = "src/bindings.rs";
 
 //from https://github.com/SnowflakePowered/glslang-rs/blob/master/glslang-sys/build.rs
 pub fn add_subdirectory(build: &mut cc::Build, directory: &str) {
@@ -65,7 +58,7 @@ fn gen_wrapper<F, const N: usize>(
 where
   F: AsRef<Path>,
 {
-  let base_args = ["-std=c++11".to_string()];
+  let base_args = ["".to_string()];
 
   let defines: Vec<String> = defines
     .iter()
@@ -152,7 +145,7 @@ fn build_vkfft() -> Result<(), Box<dyn Error>>{
   let out_dir = std::env::var("OUT_DIR")?;
   let out_dir = PathBuf::from(out_dir);
 
-  println!("cargo:rerun-if-changed=wrapper.cpp");
+  println!("cargo:rerun-if-changed=wrapper.c");
   println!("cargo:rerun-if-changed=build.rs");
 
   let mut include_dirs = vec!["VkFFT/vkFFT/vkFFt".to_string()];
@@ -178,16 +171,14 @@ fn build_vkfft() -> Result<(), Box<dyn Error>>{
   .replace("pfLD double_PI;", "double double_PI;")
   .replace("pfLD d; // long double", "double d; uint64_t alignment[2];// long double replaced with double");
 
-  let rw = out_dir.join("vkfft_rw.hpp");
+  let rw = out_dir.join("vkfft_rw.h");
   
   std::fs::write(&rw, wrapper.as_str())?;
 
   let mut build = cc::Build::default();
 
   build
-    .cpp(true)
-    .std("c++17")
-    .file("wrapper.cpp")
+    .file("wrapper.c")
     .warnings(false)
     .include(out_dir.clone());
 
