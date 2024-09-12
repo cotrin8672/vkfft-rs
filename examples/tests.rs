@@ -143,8 +143,9 @@ fn convolution(context: &Context) -> Result<(), Box<dyn Error>> {
   let buffer_size = 2 * size[0];
   let printing_size = [buffer_size, 1];
 
-  let data = context.new_buffer_from_iter((0..buffer_size as u32).map(|_| 0.0f32))?;
-  let kernel = context.new_buffer_from_iter((0..buffer_size as u32).map(|_| 0.0f32))?;
+  let data = context.new_buffer_from_iter((0..2*buffer_size as u32).map(|_| 0.0f32))?;
+  let temp = context.new_buffer_from_iter((0..2*buffer_size as u32).map(|_| 0.0f32))?;
+  let kernel = context.new_buffer_from_iter((0..2*buffer_size as u32).map(|_| 0.0f32))?;
 
 
   data.write()?.iter_mut().enumerate().for_each(|(i, val)| {
@@ -169,11 +170,14 @@ fn convolution(context: &Context) -> Result<(), Box<dyn Error>> {
   let config_builder_convolution = Config::builder()
     .input_buffer(data.buffer().clone())
     .buffer(data.buffer().clone())
+    .temp_buffer(temp.buffer().clone())
+    .output_buffer(data.buffer().clone())
     .kernel(kernel.buffer().clone())
     .dim(&size)
     .convolution()
     .coordinate_features(1)
-    .normalize();
+    .normalize()
+    .batch_count(1);
 
   
   let (app, params, builder) = context.start_fft_chain(config_builder_convolution, FftType::Forward)?;

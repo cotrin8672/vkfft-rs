@@ -168,13 +168,15 @@ fn build_vkfft() -> Result<(), Box<dyn Error>>{
     "VkFFT/vkFFT/vkFFT",
     "vkFFT"
   )?
-  .replace("static inline ", "")
+  .replace("static inline VkFFTResult VkFFTSync", "VkFFTResult VkFFTSync")
+  .replace("static inline VkFFTResult VkFFTAppend", "VkFFTResult VkFFTAppend")
+  .replace("static inline VkFFTResult VkFFTPlanAxis", "VkFFTResult VkFFTPlanAxis")
+  .replace("static inline VkFFTResult initializeVkFFT", "VkFFTResult initializeVkFFT")
+  .replace("static inline void deleteVkFFT", "void deleteVkFFT")
+  .replace("static inline int VkFFTGetVersion", "int VkFFTGetVersion")
   .replace("#include \"glslang_c_interface.h\"", "#include \"glslang/Include/glslang_c_interface.h\"")
   .replace("pfLD double_PI;", "double double_PI;")
-  .replace(
-    "pfLD d; // long double",
-    "double d; // long double replaced with double",
-  );
+  .replace("pfLD d; // long double", "double d; uint64_t alignment[2];// long double replaced with double");
 
   let rw = out_dir.join("vkfft_rw.hpp");
   

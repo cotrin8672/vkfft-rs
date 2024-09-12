@@ -567,6 +567,7 @@ impl<'a> Config<'a> {
 
       if res.temp_buffer_size != 0 {
         res.config.tempBufferNum = 1;
+        res.config.userTempBuffer = 1;
         res.config.tempBufferSize = transmute(addr_of_mut!(res.temp_buffer_size));
       }
 
@@ -599,7 +600,10 @@ impl<'a> Config<'a> {
       res.config.fft_zeropad_left = self.zeropad_left.map(u64::from);
       res.config.fft_zeropad_right = self.zeropad_right.map(u64::from);
       res.config.performConvolution = self.convolution.into();
-      res.config.kernelConvolution = self.kernel_convolution.into();
+      if self.convolution {
+        res.config.numberKernels = 1;
+      }
+      res.config.kernelConvolution = self.kernel_convolution as u64;
       res.config.performR2C = self.r2c.into();
       res.config.coordinateFeatures = self.coordinate_features as u64;
       res.config.disableReorderFourStep = self.disable_reorder_four_step.into();
@@ -636,9 +640,11 @@ impl<'a> Config<'a> {
         _ => {}
       }
 
-      if let Some(batch_count) = &self.batch_count {
-        res.config.numberBatches = *batch_count as u64;
+      if let Some(batch_count) = self.batch_count {
+        res.config.numberBatches = batch_count as u64;
       }
+
+      println!("made config {:#?}", res.config);
 
       Ok(res)
     }

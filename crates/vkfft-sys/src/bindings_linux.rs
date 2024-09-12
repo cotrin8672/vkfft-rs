@@ -2015,6 +2015,7 @@ fn bindgen_test_layout_VkMemoryBarrier() {
 pub union PfData {
   pub i: i64,
   pub d: f64,
+  pub alignment: [u64; 2usize],
   pub c: *mut PfContainer,
   pub dd: *mut PfContainer,
 }
@@ -2024,7 +2025,7 @@ fn bindgen_test_layout_PfData() {
   let ptr = UNINIT.as_ptr();
   assert_eq!(
     ::std::mem::size_of::<PfData>(),
-    8usize,
+    16usize,
     concat!("Size of: ", stringify!(PfData))
   );
   assert_eq!(
@@ -2041,6 +2042,16 @@ fn bindgen_test_layout_PfData() {
     unsafe { ::std::ptr::addr_of!((*ptr).d) as usize - ptr as usize },
     0usize,
     concat!("Offset of field: ", stringify!(PfData), "::", stringify!(d))
+  );
+  assert_eq!(
+    unsafe { ::std::ptr::addr_of!((*ptr).alignment) as usize - ptr as usize },
+    0usize,
+    concat!(
+      "Offset of field: ",
+      stringify!(PfData),
+      "::",
+      stringify!(alignment)
+    )
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).c) as usize - ptr as usize },
@@ -2072,7 +2083,7 @@ fn bindgen_test_layout_PfContainer() {
   let ptr = UNINIT.as_ptr();
   assert_eq!(
     ::std::mem::size_of::<PfContainer>(),
-    32usize,
+    40usize,
     concat!("Size of: ", stringify!(PfContainer))
   );
   assert_eq!(
@@ -2102,7 +2113,7 @@ fn bindgen_test_layout_PfContainer() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
-    16usize,
+    24usize,
     concat!(
       "Offset of field: ",
       stringify!(PfContainer),
@@ -2112,7 +2123,7 @@ fn bindgen_test_layout_PfContainer() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).size) as usize - ptr as usize },
-    24usize,
+    32usize,
     concat!(
       "Offset of field: ",
       stringify!(PfContainer),
@@ -3731,7 +3742,7 @@ fn bindgen_test_layout_VkFFTRaderContainer() {
   let ptr = UNINIT.as_ptr();
   assert_eq!(
     ::std::mem::size_of::<VkFFTRaderContainer>(),
-    624usize,
+    648usize,
     concat!("Size of: ", stringify!(VkFFTRaderContainer))
   );
   assert_eq!(
@@ -3971,7 +3982,7 @@ fn bindgen_test_layout_VkFFTRaderContainer() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).r_rader_kernelConstantStruct) as usize - ptr as usize },
-    544usize,
+    552usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTRaderContainer),
@@ -3981,7 +3992,7 @@ fn bindgen_test_layout_VkFFTRaderContainer() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).i_rader_kernelConstantStruct) as usize - ptr as usize },
-    576usize,
+    592usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTRaderContainer),
@@ -3991,7 +4002,7 @@ fn bindgen_test_layout_VkFFTRaderContainer() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).raderFFTkernel) as usize - ptr as usize },
-    608usize,
+    632usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTRaderContainer),
@@ -4001,7 +4012,7 @@ fn bindgen_test_layout_VkFFTRaderContainer() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).container) as usize - ptr as usize },
-    616usize,
+    640usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTRaderContainer),
@@ -4273,7 +4284,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   let ptr = UNINIT.as_ptr();
   assert_eq!(
     ::std::mem::size_of::<VkFFTSpecializationConstantsLayout>(),
-    10448usize,
+    12776usize,
     concat!("Size of: ", stringify!(VkFFTSpecializationConstantsLayout))
   );
   assert_eq!(
@@ -4326,7 +4337,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).localSize) as usize - ptr as usize },
-    152usize,
+    184usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4336,7 +4347,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).numSubgroups) as usize - ptr as usize },
-    248usize,
+    304usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4346,7 +4357,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).sourceFFTSize) as usize - ptr as usize },
-    256usize,
+    312usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4356,7 +4367,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fftDim) as usize - ptr as usize },
-    288usize,
+    352usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4366,7 +4377,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).precision) as usize - ptr as usize },
-    320usize,
+    392usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4376,7 +4387,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inverse) as usize - ptr as usize },
-    324usize,
+    396usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4386,7 +4397,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).actualInverse) as usize - ptr as usize },
-    328usize,
+    400usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4396,7 +4407,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inverseBluestein) as usize - ptr as usize },
-    332usize,
+    404usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4406,7 +4417,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).zeropad) as usize - ptr as usize },
-    336usize,
+    408usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4416,7 +4427,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).zeropadBluestein) as usize - ptr as usize },
-    344usize,
+    416usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4426,7 +4437,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).axis_id) as usize - ptr as usize },
-    352usize,
+    424usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4436,7 +4447,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).axis_upload_id) as usize - ptr as usize },
-    356usize,
+    428usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4446,7 +4457,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).numAxisUploads) as usize - ptr as usize },
-    360usize,
+    432usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4456,7 +4467,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).registers_per_thread) as usize - ptr as usize },
-    364usize,
+    436usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4466,7 +4477,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).registers_per_thread_per_radix) as usize - ptr as usize },
-    368usize,
+    440usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4476,7 +4487,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).min_registers_per_thread) as usize - ptr as usize },
-    500usize,
+    572usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4486,7 +4497,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).maxNonPow2Radix) as usize - ptr as usize },
-    504usize,
+    576usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4496,7 +4507,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).usedLocRegs) as usize - ptr as usize },
-    508usize,
+    580usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4506,7 +4517,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).readToRegisters) as usize - ptr as usize },
-    512usize,
+    584usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4516,7 +4527,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).writeFromRegisters) as usize - ptr as usize },
-    516usize,
+    588usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4526,7 +4537,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).LUT) as usize - ptr as usize },
-    520usize,
+    592usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4536,7 +4547,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).LUT_4step) as usize - ptr as usize },
-    524usize,
+    596usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4546,7 +4557,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).raderUintLUT) as usize - ptr as usize },
-    528usize,
+    600usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4556,7 +4567,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).useCoalescedLUTUploadToSM) as usize - ptr as usize },
-    532usize,
+    604usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4566,7 +4577,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).useBluesteinFFT) as usize - ptr as usize },
-    536usize,
+    608usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4576,7 +4587,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).reverseBluesteinMultiUpload) as usize - ptr as usize },
-    540usize,
+    612usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4586,7 +4597,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).BluesteinConvolutionStep) as usize - ptr as usize },
-    544usize,
+    616usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4596,7 +4607,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).BluesteinPreMultiplication) as usize - ptr as usize },
-    548usize,
+    620usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4606,7 +4617,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).BluesteinPostMultiplication) as usize - ptr as usize },
-    552usize,
+    624usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4616,7 +4627,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).startDCT3LUT) as usize - ptr as usize },
-    560usize,
+    632usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4626,7 +4637,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).startDCT4LUT) as usize - ptr as usize },
-    592usize,
+    672usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4636,7 +4647,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performR2C) as usize - ptr as usize },
-    624usize,
+    712usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4646,7 +4657,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performR2CmultiUpload) as usize - ptr as usize },
-    628usize,
+    716usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4656,7 +4667,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performR2RmultiUpload) as usize - ptr as usize },
-    632usize,
+    720usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4666,7 +4677,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performDCT) as usize - ptr as usize },
-    636usize,
+    724usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4676,7 +4687,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performDST) as usize - ptr as usize },
-    640usize,
+    728usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4686,7 +4697,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performBandwidthBoost) as usize - ptr as usize },
-    644usize,
+    732usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4696,7 +4707,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).frequencyZeropadding) as usize - ptr as usize },
-    648usize,
+    736usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4706,7 +4717,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performZeropaddingFull) as usize - ptr as usize },
-    652usize,
+    740usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4716,7 +4727,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performZeropaddingInput) as usize - ptr as usize },
-    668usize,
+    756usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4726,7 +4737,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performZeropaddingOutput) as usize - ptr as usize },
-    684usize,
+    772usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4736,7 +4747,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fft_zeropad_left_full) as usize - ptr as usize },
-    704usize,
+    792usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4746,7 +4757,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fft_zeropad_left_read) as usize - ptr as usize },
-    832usize,
+    952usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4756,7 +4767,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fft_zeropad_left_write) as usize - ptr as usize },
-    960usize,
+    1112usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4766,7 +4777,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fft_zeropad_right_full) as usize - ptr as usize },
-    1088usize,
+    1272usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4776,7 +4787,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fft_zeropad_right_read) as usize - ptr as usize },
-    1216usize,
+    1432usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4786,7 +4797,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fft_zeropad_right_write) as usize - ptr as usize },
-    1344usize,
+    1592usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4796,7 +4807,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fft_zeropad_Bluestein_left_read) as usize - ptr as usize },
-    1472usize,
+    1752usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4808,7 +4819,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
     unsafe {
       ::std::ptr::addr_of!((*ptr).fft_zeropad_Bluestein_left_write) as usize - ptr as usize
     },
-    1600usize,
+    1912usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4820,7 +4831,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
     unsafe {
       ::std::ptr::addr_of!((*ptr).fft_zeropad_Bluestein_right_read) as usize - ptr as usize
     },
-    1728usize,
+    2072usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4832,7 +4843,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
     unsafe {
       ::std::ptr::addr_of!((*ptr).fft_zeropad_Bluestein_right_write) as usize - ptr as usize
     },
-    1856usize,
+    2232usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4842,7 +4853,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inputStride) as usize - ptr as usize },
-    1984usize,
+    2392usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4852,7 +4863,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).outputStride) as usize - ptr as usize },
-    2176usize,
+    2632usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4862,7 +4873,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fft_dim_full) as usize - ptr as usize },
-    2368usize,
+    2872usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4872,7 +4883,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).stageStartSize) as usize - ptr as usize },
-    2400usize,
+    2912usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4882,7 +4893,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).firstStageStartSize) as usize - ptr as usize },
-    2432usize,
+    2952usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4892,7 +4903,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fft_dim_x) as usize - ptr as usize },
-    2464usize,
+    2992usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4902,7 +4913,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).dispatchZactualFFTSize) as usize - ptr as usize },
-    2496usize,
+    3032usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4912,7 +4923,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).numStages) as usize - ptr as usize },
-    2528usize,
+    3072usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4922,7 +4933,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).stageRadix) as usize - ptr as usize },
-    2532usize,
+    3076usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4932,7 +4943,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inputOffset) as usize - ptr as usize },
-    2664usize,
+    3208usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4942,7 +4953,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).kernelOffset) as usize - ptr as usize },
-    2696usize,
+    3248usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4952,7 +4963,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).outputOffset) as usize - ptr as usize },
-    2728usize,
+    3288usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4962,7 +4973,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).reorderFourStep) as usize - ptr as usize },
-    2760usize,
+    3328usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4974,7 +4985,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
     unsafe {
       ::std::ptr::addr_of!((*ptr).storeSharedComplexComponentsSeparately) as usize - ptr as usize
     },
-    2764usize,
+    3332usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4984,7 +4995,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).pushConstantsStructSize) as usize - ptr as usize },
-    2768usize,
+    3336usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -4994,7 +5005,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performWorkGroupShift) as usize - ptr as usize },
-    2772usize,
+    3340usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5006,7 +5017,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
     unsafe {
       ::std::ptr::addr_of!((*ptr).performPostCompilationInputOffset) as usize - ptr as usize
     },
-    2788usize,
+    3356usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5018,7 +5029,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
     unsafe {
       ::std::ptr::addr_of!((*ptr).performPostCompilationOutputOffset) as usize - ptr as usize
     },
-    2792usize,
+    3360usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5030,7 +5041,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
     unsafe {
       ::std::ptr::addr_of!((*ptr).performPostCompilationKernelOffset) as usize - ptr as usize
     },
-    2796usize,
+    3364usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5040,7 +5051,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inputBufferBlockNum) as usize - ptr as usize },
-    2800usize,
+    3368usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5050,7 +5061,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inputBufferBlockSize) as usize - ptr as usize },
-    2808usize,
+    3376usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5060,7 +5071,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).outputBufferBlockNum) as usize - ptr as usize },
-    2816usize,
+    3384usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5070,7 +5081,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).outputBufferBlockSize) as usize - ptr as usize },
-    2824usize,
+    3392usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5080,7 +5091,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).kernelBlockNum) as usize - ptr as usize },
-    2832usize,
+    3400usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5090,7 +5101,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).kernelBlockSize) as usize - ptr as usize },
-    2840usize,
+    3408usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5100,7 +5111,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).numCoordinates) as usize - ptr as usize },
-    2848usize,
+    3416usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5110,7 +5121,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).matrixConvolution) as usize - ptr as usize },
-    2852usize,
+    3420usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5120,7 +5131,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).numBatches) as usize - ptr as usize },
-    2856usize,
+    3424usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5130,7 +5141,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).numKernels) as usize - ptr as usize },
-    2888usize,
+    3464usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5140,7 +5151,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).conjugateConvolution) as usize - ptr as usize },
-    2920usize,
+    3504usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5150,7 +5161,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).crossPowerSpectrumNormalization) as usize - ptr as usize },
-    2924usize,
+    3508usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5160,7 +5171,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).usedSharedMemory) as usize - ptr as usize },
-    2928usize,
+    3512usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5170,7 +5181,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).sharedMemSize) as usize - ptr as usize },
-    2960usize,
+    3552usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5180,7 +5191,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).sharedMemSizePow2) as usize - ptr as usize },
-    2964usize,
+    3556usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5190,7 +5201,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).normalize) as usize - ptr as usize },
-    2968usize,
+    3560usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5200,7 +5211,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).complexSize) as usize - ptr as usize },
-    2972usize,
+    3564usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5210,7 +5221,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inputNumberByteSize) as usize - ptr as usize },
-    2976usize,
+    3568usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5220,7 +5231,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).outputNumberByteSize) as usize - ptr as usize },
-    2980usize,
+    3572usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5230,7 +5241,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).kernelNumberByteSize) as usize - ptr as usize },
-    2984usize,
+    3576usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5240,7 +5251,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).maxStageSumLUT) as usize - ptr as usize },
-    2988usize,
+    3580usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5250,7 +5261,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).swapComputeWorkGroupID) as usize - ptr as usize },
-    2992usize,
+    3584usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5260,7 +5271,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).convolutionStep) as usize - ptr as usize },
-    2996usize,
+    3588usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5270,7 +5281,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).symmetricKernel) as usize - ptr as usize },
-    3000usize,
+    3592usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5280,7 +5291,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).supportAxis) as usize - ptr as usize },
-    3004usize,
+    3596usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5290,7 +5301,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).cacheShuffle) as usize - ptr as usize },
-    3008usize,
+    3600usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5300,7 +5311,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).registerBoost) as usize - ptr as usize },
-    3012usize,
+    3604usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5310,7 +5321,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).warpSize) as usize - ptr as usize },
-    3016usize,
+    3608usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5320,7 +5331,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).numSharedBanks) as usize - ptr as usize },
-    3020usize,
+    3612usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5330,7 +5341,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).resolveBankConflictFirstStages) as usize - ptr as usize },
-    3024usize,
+    3616usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5342,7 +5353,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
     unsafe {
       ::std::ptr::addr_of!((*ptr).sharedStrideBankConflictFirstStages) as usize - ptr as usize
     },
-    3032usize,
+    3624usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5352,7 +5363,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).sharedStrideReadWriteConflict) as usize - ptr as usize },
-    3064usize,
+    3664usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5362,7 +5373,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).sharedStrideRaderFFT) as usize - ptr as usize },
-    3096usize,
+    3704usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5372,7 +5383,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).sharedShiftRaderFFT) as usize - ptr as usize },
-    3128usize,
+    3744usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5382,7 +5393,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).maxSharedStride) as usize - ptr as usize },
-    3160usize,
+    3784usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5392,7 +5403,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).maxSingleSizeStrided) as usize - ptr as usize },
-    3192usize,
+    3824usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5402,7 +5413,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).axisSwapped) as usize - ptr as usize },
-    3224usize,
+    3864usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5412,7 +5423,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).stridedSharedLayout) as usize - ptr as usize },
-    3228usize,
+    3868usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5422,7 +5433,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).mergeSequencesR2C) as usize - ptr as usize },
-    3232usize,
+    3872usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5434,7 +5445,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
     unsafe {
       ::std::ptr::addr_of!((*ptr).forceCallbackVersionRealTransforms) as usize - ptr as usize
     },
-    3236usize,
+    3876usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5444,7 +5455,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).numBuffersBound) as usize - ptr as usize },
-    3240usize,
+    3880usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5454,7 +5465,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).convolutionBindingID) as usize - ptr as usize },
-    3280usize,
+    3920usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5464,7 +5475,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).LUTBindingID) as usize - ptr as usize },
-    3284usize,
+    3924usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5474,7 +5485,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).BluesteinConvolutionBindingID) as usize - ptr as usize },
-    3288usize,
+    3928usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5486,7 +5497,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
     unsafe {
       ::std::ptr::addr_of!((*ptr).BluesteinMultiplicationBindingID) as usize - ptr as usize
     },
-    3292usize,
+    3932usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5496,7 +5507,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).useRader) as usize - ptr as usize },
-    3296usize,
+    3936usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5506,7 +5517,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).numRaderPrimes) as usize - ptr as usize },
-    3300usize,
+    3940usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5516,7 +5527,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).minRaderFFTThreadNum) as usize - ptr as usize },
-    3304usize,
+    3944usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5526,7 +5537,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).raderContainer) as usize - ptr as usize },
-    3312usize,
+    3952usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5536,7 +5547,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).currentRaderContainer) as usize - ptr as usize },
-    3320usize,
+    3960usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5546,7 +5557,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).RaderUintLUTBindingID) as usize - ptr as usize },
-    3328usize,
+    3968usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5556,7 +5567,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).useRaderMult) as usize - ptr as usize },
-    3332usize,
+    3972usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5566,7 +5577,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).additionalRaderSharedSize) as usize - ptr as usize },
-    3336usize,
+    3976usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5576,7 +5587,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).RaderKernelOffsetShared) as usize - ptr as usize },
-    3368usize,
+    4016usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5586,7 +5597,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).RaderKernelOffsetLUT) as usize - ptr as usize },
-    4424usize,
+    5336usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5596,7 +5607,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).rader_generator) as usize - ptr as usize },
-    5480usize,
+    6656usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5606,7 +5617,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fixMinRaderPrimeMult) as usize - ptr as usize },
-    5612usize,
+    6788usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5616,7 +5627,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fixMaxRaderPrimeMult) as usize - ptr as usize },
-    5616usize,
+    6792usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5626,7 +5637,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fixMinRaderPrimeFFT) as usize - ptr as usize },
-    5620usize,
+    6796usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5636,7 +5647,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).fixMaxRaderPrimeFFT) as usize - ptr as usize },
-    5624usize,
+    6800usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5646,7 +5657,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inline_rader_g_pow) as usize - ptr as usize },
-    5628usize,
+    6804usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5656,7 +5667,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inline_rader_kernel) as usize - ptr as usize },
-    5632usize,
+    6808usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5666,7 +5677,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).raderRegisters) as usize - ptr as usize },
-    5636usize,
+    6812usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5676,7 +5687,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).rader_min_registers) as usize - ptr as usize },
-    5640usize,
+    6816usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5686,7 +5697,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).useRaderFFT) as usize - ptr as usize },
-    5644usize,
+    6820usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5696,7 +5707,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performOffsetUpdate) as usize - ptr as usize },
-    5648usize,
+    6824usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5706,7 +5717,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).performBufferSetUpdate) as usize - ptr as usize },
-    5652usize,
+    6828usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5716,7 +5727,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).useUint64) as usize - ptr as usize },
-    5656usize,
+    6832usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5726,7 +5737,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).disableSetLocale) as usize - ptr as usize },
-    5660usize,
+    6836usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5736,7 +5747,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).regIDs) as usize - ptr as usize },
-    5664usize,
+    6840usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5746,7 +5757,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).regIDs_copy) as usize - ptr as usize },
-    5672usize,
+    6848usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5756,7 +5767,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).temp_conv) as usize - ptr as usize },
-    5680usize,
+    6856usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5766,7 +5777,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).disableThreadsStart) as usize - ptr as usize },
-    5688usize,
+    6864usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5776,7 +5787,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).disableThreadsEnd) as usize - ptr as usize },
-    5696usize,
+    6872usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5786,7 +5797,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).sdataID) as usize - ptr as usize },
-    5704usize,
+    6880usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5796,7 +5807,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inoutID) as usize - ptr as usize },
-    5736usize,
+    6920usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5806,7 +5817,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inoutID2) as usize - ptr as usize },
-    5768usize,
+    6960usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5816,7 +5827,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inoutID_x) as usize - ptr as usize },
-    5800usize,
+    7000usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5826,7 +5837,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inoutID_y) as usize - ptr as usize },
-    5832usize,
+    7040usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5836,7 +5847,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).combinedID) as usize - ptr as usize },
-    5864usize,
+    7080usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5846,7 +5857,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).LUTId) as usize - ptr as usize },
-    5896usize,
+    7120usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5856,7 +5867,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).raderIDx) as usize - ptr as usize },
-    5928usize,
+    7160usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5866,7 +5877,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).raderIDx2) as usize - ptr as usize },
-    5960usize,
+    7200usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5876,7 +5887,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).offsetImaginaryShared) as usize - ptr as usize },
-    5992usize,
+    7240usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5886,7 +5897,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_LocalInvocationID_x) as usize - ptr as usize },
-    6024usize,
+    7280usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5896,7 +5907,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_LocalInvocationID_y) as usize - ptr as usize },
-    6056usize,
+    7320usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5906,7 +5917,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_LocalInvocationID_z) as usize - ptr as usize },
-    6088usize,
+    7360usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5916,7 +5927,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_GlobalInvocationID_x) as usize - ptr as usize },
-    6120usize,
+    7400usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5926,7 +5937,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_GlobalInvocationID_y) as usize - ptr as usize },
-    6152usize,
+    7440usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5936,7 +5947,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_GlobalInvocationID_z) as usize - ptr as usize },
-    6184usize,
+    7480usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5946,7 +5957,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_SubgroupInvocationID) as usize - ptr as usize },
-    6216usize,
+    7520usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5956,7 +5967,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_SubgroupID) as usize - ptr as usize },
-    6248usize,
+    7560usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5966,7 +5977,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).tshuffle) as usize - ptr as usize },
-    6280usize,
+    7600usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5976,7 +5987,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).sharedStride) as usize - ptr as usize },
-    6312usize,
+    7640usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5986,7 +5997,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_WorkGroupSize_x) as usize - ptr as usize },
-    6344usize,
+    7680usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -5996,7 +6007,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_WorkGroupSize_y) as usize - ptr as usize },
-    6376usize,
+    7720usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6006,7 +6017,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_WorkGroupSize_z) as usize - ptr as usize },
-    6408usize,
+    7760usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6016,7 +6027,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).halfDef) as usize - ptr as usize },
-    6440usize,
+    7800usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6026,7 +6037,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).floatDef) as usize - ptr as usize },
-    6472usize,
+    7840usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6036,7 +6047,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).doubleDef) as usize - ptr as usize },
-    6504usize,
+    7880usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6046,7 +6057,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).quadDef) as usize - ptr as usize },
-    6536usize,
+    7920usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6056,7 +6067,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).half2Def) as usize - ptr as usize },
-    6568usize,
+    7960usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6066,7 +6077,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).float2Def) as usize - ptr as usize },
-    6600usize,
+    8000usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6076,7 +6087,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).double2Def) as usize - ptr as usize },
-    6632usize,
+    8040usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6086,7 +6097,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).quad2Def) as usize - ptr as usize },
-    6664usize,
+    8080usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6096,7 +6107,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).halfLiteral) as usize - ptr as usize },
-    6696usize,
+    8120usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6106,7 +6117,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).floatLiteral) as usize - ptr as usize },
-    6728usize,
+    8160usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6116,7 +6127,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).doubleLiteral) as usize - ptr as usize },
-    6760usize,
+    8200usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6126,7 +6137,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).intDef) as usize - ptr as usize },
-    6792usize,
+    8240usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6136,7 +6147,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).uintDef) as usize - ptr as usize },
-    6824usize,
+    8280usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6146,7 +6157,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).int64Def) as usize - ptr as usize },
-    6856usize,
+    8320usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6156,7 +6167,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).uint64Def) as usize - ptr as usize },
-    6888usize,
+    8360usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6166,7 +6177,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).constDef) as usize - ptr as usize },
-    6920usize,
+    8400usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6176,7 +6187,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).functionDef) as usize - ptr as usize },
-    6952usize,
+    8440usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6186,7 +6197,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_WorkGroupID_x) as usize - ptr as usize },
-    6984usize,
+    8480usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6196,7 +6207,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_WorkGroupID_y) as usize - ptr as usize },
-    7016usize,
+    8520usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6206,7 +6217,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).gl_WorkGroupID_z) as usize - ptr as usize },
-    7048usize,
+    8560usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6216,7 +6227,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).workGroupShiftX) as usize - ptr as usize },
-    7080usize,
+    8600usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6226,7 +6237,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).workGroupShiftY) as usize - ptr as usize },
-    7112usize,
+    8640usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6236,7 +6247,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).workGroupShiftZ) as usize - ptr as usize },
-    7144usize,
+    8680usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6246,7 +6257,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).shiftX) as usize - ptr as usize },
-    7176usize,
+    8720usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6256,7 +6267,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).shiftY) as usize - ptr as usize },
-    7208usize,
+    8760usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6266,7 +6277,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).shiftZ) as usize - ptr as usize },
-    7240usize,
+    8800usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6276,7 +6287,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).useDisableThreads) as usize - ptr as usize },
-    7272usize,
+    8840usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6286,7 +6297,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).disableThreads) as usize - ptr as usize },
-    7280usize,
+    8848usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6296,7 +6307,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).tempReg) as usize - ptr as usize },
-    7312usize,
+    8888usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6306,7 +6317,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).coordinate) as usize - ptr as usize },
-    7344usize,
+    8928usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6316,7 +6327,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).batchID) as usize - ptr as usize },
-    7376usize,
+    8968usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6326,7 +6337,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).stageInvocationID) as usize - ptr as usize },
-    7408usize,
+    9008usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6336,7 +6347,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).blockInvocationID) as usize - ptr as usize },
-    7440usize,
+    9048usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6346,7 +6357,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).temp) as usize - ptr as usize },
-    7472usize,
+    9088usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6356,7 +6367,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).temp2) as usize - ptr as usize },
-    7504usize,
+    9128usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6366,7 +6377,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).tempInt) as usize - ptr as usize },
-    7536usize,
+    9168usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6376,7 +6387,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).tempInt2) as usize - ptr as usize },
-    7568usize,
+    9208usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6386,7 +6397,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).tempFloat) as usize - ptr as usize },
-    7600usize,
+    9248usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6396,7 +6407,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).tempQuad) as usize - ptr as usize },
-    7632usize,
+    9288usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6406,7 +6417,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).tempQuad2) as usize - ptr as usize },
-    7664usize,
+    9328usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6416,7 +6427,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).tempQuad3) as usize - ptr as usize },
-    7696usize,
+    9368usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6426,7 +6437,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).tempIntQuad) as usize - ptr as usize },
-    7728usize,
+    9408usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6436,7 +6447,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).w) as usize - ptr as usize },
-    7760usize,
+    9448usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6446,7 +6457,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).iw) as usize - ptr as usize },
-    7792usize,
+    9488usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6456,7 +6467,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).angle) as usize - ptr as usize },
-    7824usize,
+    9528usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6466,7 +6477,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).mult) as usize - ptr as usize },
-    7856usize,
+    9568usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6476,7 +6487,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).x0) as usize - ptr as usize },
-    7888usize,
+    9608usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6486,7 +6497,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).locID) as usize - ptr as usize },
-    8944usize,
+    10928usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6496,7 +6507,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).code0) as usize - ptr as usize },
-    10000usize,
+    12248usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6506,7 +6517,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).tempStr) as usize - ptr as usize },
-    10008usize,
+    12256usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6516,7 +6527,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).tempLen) as usize - ptr as usize },
-    10016usize,
+    12264usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6526,7 +6537,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).currentLen) as usize - ptr as usize },
-    10024usize,
+    12272usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6536,7 +6547,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).currentTempLen) as usize - ptr as usize },
-    10032usize,
+    12280usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6546,7 +6557,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).maxCodeLength) as usize - ptr as usize },
-    10040usize,
+    12288usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6556,7 +6567,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).maxTempLength) as usize - ptr as usize },
-    10048usize,
+    12296usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6566,7 +6577,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).dataTypeSize) as usize - ptr as usize },
-    10056usize,
+    12304usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6576,7 +6587,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).LFending) as usize - ptr as usize },
-    10064usize,
+    12312usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6586,7 +6597,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).complexDataType) as usize - ptr as usize },
-    10096usize,
+    12352usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6596,7 +6607,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).floatTypeCode) as usize - ptr as usize },
-    10100usize,
+    12356usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6606,7 +6617,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).floatTypeKernelMemoryCode) as usize - ptr as usize },
-    10104usize,
+    12360usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6616,7 +6627,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).floatTypeInputMemoryCode) as usize - ptr as usize },
-    10108usize,
+    12364usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6626,7 +6637,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).floatTypeOutputMemoryCode) as usize - ptr as usize },
-    10112usize,
+    12368usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6636,7 +6647,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).vecTypeCode) as usize - ptr as usize },
-    10116usize,
+    12372usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6646,7 +6657,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).vecTypeKernelMemoryCode) as usize - ptr as usize },
-    10120usize,
+    12376usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6656,7 +6667,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).vecTypeInputMemoryCode) as usize - ptr as usize },
-    10124usize,
+    12380usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6666,7 +6677,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).vecTypeOutputMemoryCode) as usize - ptr as usize },
-    10128usize,
+    12384usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6676,7 +6687,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).intTypeCode) as usize - ptr as usize },
-    10132usize,
+    12388usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6686,7 +6697,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).uintTypeCode) as usize - ptr as usize },
-    10136usize,
+    12392usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6696,7 +6707,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).uintType32Code) as usize - ptr as usize },
-    10140usize,
+    12396usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6706,7 +6717,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inputMemoryCode) as usize - ptr as usize },
-    10144usize,
+    12400usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6716,7 +6727,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).outputMemoryCode) as usize - ptr as usize },
-    10148usize,
+    12404usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6726,7 +6737,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inputsStruct) as usize - ptr as usize },
-    10152usize,
+    12408usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6736,7 +6747,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).outputsStruct) as usize - ptr as usize },
-    10184usize,
+    12448usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6746,7 +6757,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).kernelStruct) as usize - ptr as usize },
-    10216usize,
+    12488usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6756,7 +6767,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).sdataStruct) as usize - ptr as usize },
-    10248usize,
+    12528usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6766,7 +6777,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).LUTStruct) as usize - ptr as usize },
-    10280usize,
+    12568usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6776,7 +6787,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).BluesteinStruct) as usize - ptr as usize },
-    10312usize,
+    12608usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6788,7 +6799,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
     unsafe {
       ::std::ptr::addr_of!((*ptr).BluesteinConvolutionKernelStruct) as usize - ptr as usize
     },
-    10344usize,
+    12648usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6798,7 +6809,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).g_powStruct) as usize - ptr as usize },
-    10376usize,
+    12688usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6808,7 +6819,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).oldLocale) as usize - ptr as usize },
-    10408usize,
+    12728usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -6818,7 +6829,7 @@ fn bindgen_test_layout_VkFFTSpecializationConstantsLayout() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).id) as usize - ptr as usize },
-    10440usize,
+    12768usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTSpecializationConstantsLayout),
@@ -7000,7 +7011,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   let ptr = UNINIT.as_ptr();
   assert_eq!(
     ::std::mem::size_of::<VkFFTAxis>(),
-    10968usize,
+    13296usize,
     concat!("Size of: ", stringify!(VkFFTAxis))
   );
   assert_eq!(
@@ -7050,7 +7061,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).pushConstants) as usize - ptr as usize },
-    10496usize,
+    12824usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7060,7 +7071,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).updatePushConstants) as usize - ptr as usize },
-    10744usize,
+    13072usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7070,7 +7081,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).VkFFTFunctionName) as usize - ptr as usize },
-    10752usize,
+    13080usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7080,7 +7091,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inputBuffer) as usize - ptr as usize },
-    10808usize,
+    13136usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7090,7 +7101,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).outputBuffer) as usize - ptr as usize },
-    10816usize,
+    13144usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7100,7 +7111,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).descriptorPool) as usize - ptr as usize },
-    10824usize,
+    13152usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7110,7 +7121,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).descriptorSetLayout) as usize - ptr as usize },
-    10832usize,
+    13160usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7120,7 +7131,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).descriptorSet) as usize - ptr as usize },
-    10840usize,
+    13168usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7130,7 +7141,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).pipelineLayout) as usize - ptr as usize },
-    10848usize,
+    13176usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7140,7 +7151,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).pipeline) as usize - ptr as usize },
-    10856usize,
+    13184usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7150,7 +7161,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).bufferLUTDeviceMemory) as usize - ptr as usize },
-    10864usize,
+    13192usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7160,7 +7171,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).bufferLUT) as usize - ptr as usize },
-    10872usize,
+    13200usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7170,7 +7181,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).bufferRaderUintLUTDeviceMemory) as usize - ptr as usize },
-    10880usize,
+    13208usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7180,7 +7191,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).bufferRaderUintLUT) as usize - ptr as usize },
-    10888usize,
+    13216usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7190,7 +7201,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).bufferBluesteinDeviceMemory) as usize - ptr as usize },
-    10896usize,
+    13224usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7200,7 +7211,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).bufferBluesteinFFTDeviceMemory) as usize - ptr as usize },
-    10904usize,
+    13232usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7210,7 +7221,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).bufferBluestein) as usize - ptr as usize },
-    10912usize,
+    13240usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7220,7 +7231,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).bufferBluesteinFFT) as usize - ptr as usize },
-    10920usize,
+    13248usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7230,7 +7241,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).binary) as usize - ptr as usize },
-    10928usize,
+    13256usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7240,7 +7251,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).binarySize) as usize - ptr as usize },
-    10936usize,
+    13264usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7250,7 +7261,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).bufferLUTSize) as usize - ptr as usize },
-    10944usize,
+    13272usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7260,7 +7271,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).bufferRaderUintLUTSize) as usize - ptr as usize },
-    10952usize,
+    13280usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7270,7 +7281,7 @@ fn bindgen_test_layout_VkFFTAxis() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).referenceLUT) as usize - ptr as usize },
-    10960usize,
+    13288usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTAxis),
@@ -7297,7 +7308,7 @@ fn bindgen_test_layout_VkFFTPlan() {
   let ptr = UNINIT.as_ptr();
   assert_eq!(
     ::std::mem::size_of::<VkFFTPlan>(),
-    362272usize,
+    439096usize,
     concat!("Size of: ", stringify!(VkFFTPlan))
   );
   assert_eq!(
@@ -7347,7 +7358,7 @@ fn bindgen_test_layout_VkFFTPlan() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).bigSequenceEvenR2C) as usize - ptr as usize },
-    175776usize,
+    213024usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTPlan),
@@ -7357,7 +7368,7 @@ fn bindgen_test_layout_VkFFTPlan() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).actualPerformR2CPerAxis) as usize - ptr as usize },
-    175784usize,
+    213032usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTPlan),
@@ -7367,7 +7378,7 @@ fn bindgen_test_layout_VkFFTPlan() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).R2Cdecomposition) as usize - ptr as usize },
-    175816usize,
+    213064usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTPlan),
@@ -7377,7 +7388,7 @@ fn bindgen_test_layout_VkFFTPlan() {
   );
   assert_eq!(
     unsafe { ::std::ptr::addr_of!((*ptr).inverseBluesteinAxes) as usize - ptr as usize },
-    186784usize,
+    226360usize,
     concat!(
       "Offset of field: ",
       stringify!(VkFFTPlan),
