@@ -51,7 +51,9 @@ pub struct ConfigBuilder<'a> {
   use_lut: bool,
   symmetric_kernel: bool,
   input_formatted: Option<bool>,
+  inverse_return_to_input: Option<bool>,
   output_formatted: Option<bool>,
+  matrix_convolution: Option<u64>,
 }
 
 impl<'a> ConfigBuilder<'a> {
@@ -83,7 +85,9 @@ impl<'a> ConfigBuilder<'a> {
       symmetric_kernel: false,
       input_formatted: None,
       output_formatted: None,
+      inverse_return_to_input: None,
       kernel: None,
+      matrix_convolution: None,
     }
   }
 
@@ -129,43 +133,33 @@ impl<'a> ConfigBuilder<'a> {
     self
   }
 
-  pub fn buffer<B>(mut self, buffer: B) -> Self
-  where
-    B: Into<Arc<Buffer>>,
+  pub fn buffer(mut self, buffer: Arc<Buffer>) -> Self
   {
-    self.buffer = Some(buffer.into());
+    self.buffer = Some(buffer);
     self
   }
 
-  pub fn temp_buffer<B>(mut self, temp_buffer: B) -> Self
-  where
-    B: Into<Arc<Buffer>>,
+  pub fn temp_buffer(mut self, temp_buffer: Arc<Buffer>) -> Self
   {
-    self.temp_buffer = Some(temp_buffer.into());
+    self.temp_buffer = Some(temp_buffer);
     self
   }
 
-  pub fn input_buffer<B>(mut self, input_buffer: B) -> Self
-  where
-    B: Into<Arc<Buffer>>,
+  pub fn input_buffer(mut self, input_buffer: Arc<Buffer>) -> Self
   {
-    self.input_buffer = Some(input_buffer.into());
+    self.input_buffer = Some(input_buffer);
     self
   }
 
-  pub fn output_buffer<B>(mut self, output_buffer: B) -> Self
-  where
-    B: Into<Arc<Buffer>>,
+  pub fn output_buffer(mut self, output_buffer: Arc<Buffer>) -> Self
   {
-    self.output_buffer = Some(output_buffer.into());
+    self.output_buffer = Some(output_buffer);
     self
   }
 
-  pub fn kernel<B>(mut self, kernel: B) -> Self
-  where
-    B: Into<Arc<Buffer>>,
+  pub fn kernel(mut self, kernel: Arc<Buffer>) -> Self
   {
-    self.kernel = Some(kernel.into());
+    self.kernel = Some(kernel);
     self
   }
 
@@ -201,6 +195,11 @@ impl<'a> ConfigBuilder<'a> {
 
   pub fn coordinate_features(mut self, coordinate_features: u32) -> Self {
     self.coordinate_features = coordinate_features;
+    self
+  }
+
+  pub fn matrix_convolution(mut self, matrix_convolution: u64) -> Self {
+    self.matrix_convolution = Some(matrix_convolution);
     self
   }
 
@@ -267,6 +266,10 @@ impl<'a> ConfigBuilder<'a> {
     self
   }
 
+  pub fn inverse_return_to_input(mut self) -> Self {
+    self.inverse_return_to_input = Some(true);
+    self
+  }
   pub fn output_formatted(mut self, output_formatted: bool) -> Self {
     self.output_formatted = Some(output_formatted);
     self
@@ -325,7 +328,9 @@ impl<'a> ConfigBuilder<'a> {
       kernel: self.kernel,
       temp_buffer: self.temp_buffer,
       input_buffer: self.input_buffer,
+      inverse_return_to_input: self.inverse_return_to_input,
       output_buffer: self.output_buffer,
+      matrix_convolution: self.matrix_convolution,
     })
   }
 }
@@ -401,10 +406,19 @@ pub struct Config<'a> {
   /// (only if numberBatches==1 and numberKernels==1)
   pub input_formatted: Option<bool>,
 
+  /// put the inverse transformed data into the input buffer, if input_formatted
+  /// is set to true
+  pub inverse_return_to_input: Option<bool>,
+
   /// specify if output buffer is padded - false is padded, true is not padded.
   /// For example if it is not padded for R2C if out-of-place mode is selected
   /// (only if numberBatches==1 and numberKernels==1)
   pub output_formatted: Option<bool>,
+
+  /// If performing matrix convolution, leading dimension of the matrix, e.g. if
+  /// convolving with a 3x3 matrix, matrix_convolution is 3, and coordinate_features
+  /// should also be 3
+  pub matrix_convolution: Option<u64>,
 }
 
 #[derive(Display, Debug, Error)]
@@ -548,7 +562,6 @@ impl<'a> Config<'a> {
       res.config.normalize = self.normalize.into();
 
       if res.kernel_size != 0 {
-        res.config.kernelNum = 1;
         res.config.kernelSize = transmute(addr_of_mut!(res.kernel_size));
       }
 
@@ -557,7 +570,6 @@ impl<'a> Config<'a> {
       }
 
       if res.buffer_size != 0 {
-        res.config.bufferNum = 1;
         res.config.bufferSize = transmute(addr_of_mut!(res.buffer_size));
       }
 
@@ -566,7 +578,6 @@ impl<'a> Config<'a> {
       }
 
       if res.temp_buffer_size != 0 {
-        res.config.tempBufferNum = 1;
         res.config.userTempBuffer = 1;
         res.config.tempBufferSize = transmute(addr_of_mut!(res.temp_buffer_size));
       }
@@ -576,7 +587,6 @@ impl<'a> Config<'a> {
       }
 
       if res.input_buffer_size != 0 {
-        res.config.inputBufferNum = 1;
         res.config.inputBufferSize = transmute(addr_of_mut!(res.input_buffer_size));
       }
 
@@ -585,7 +595,6 @@ impl<'a> Config<'a> {
       }
 
       if res.output_buffer_size != 0 {
-        res.config.outputBufferNum = 1;
         res.config.outputBufferSize = transmute(addr_of_mut!(res.output_buffer_size));
       }
 
@@ -612,6 +621,10 @@ impl<'a> Config<'a> {
 
       if let Some(input_formatted) = self.input_formatted {
         res.config.isInputFormatted = input_formatted.into();
+      }
+
+      if let Some(inverse_return_to_input) = self.inverse_return_to_input {
+        res.config.inverseReturnToInputBuffer = inverse_return_to_input.into();
       }
 
       if let Some(output_formatted) = self.output_formatted {
@@ -644,7 +657,9 @@ impl<'a> Config<'a> {
         res.config.numberBatches = batch_count as u64;
       }
 
-      println!("made config {:#?}", res.config);
+      if let Some(matrix_convolution) = self.matrix_convolution {
+        res.config.matrixConvolution = matrix_convolution;
+      }
 
       Ok(res)
     }

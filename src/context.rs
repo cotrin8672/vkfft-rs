@@ -2,7 +2,6 @@ use crate::{
   app::{App, LaunchParams},
   config::ConfigBuilder,
 };
-
 use std::{pin::Pin, sync::Arc};
 use vulkano::{buffer::{AllocateBufferError, Buffer, BufferContents, BufferCreateInfo, BufferUsage, Subbuffer}, command_buffer::sys::UnsafeCommandBuffer, memory::allocator::{AllocationCreateInfo, MemoryAllocator, MemoryTypeFilter}, Validated};
 use vulkano::device::{physical::PhysicalDevice, Device, Queue};
@@ -17,7 +16,6 @@ use vulkano::{
   sync::fence::FenceCreateInfo,
   VulkanObject,
 };
-
 use vulkano::instance::Instance;
 use vulkano::sync::fence::Fence;
 use ash::vk::Result as ash_Result;
