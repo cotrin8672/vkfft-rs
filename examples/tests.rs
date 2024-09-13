@@ -10,15 +10,24 @@ fn main() -> Result<(), Box<dyn Error>> {
   // These first steps will always take place in a Vulkan program; first the library has to be loaded, then the instance created
   let library = vulkano::VulkanLibrary::new().expect("no local Vulkan library/DLL");
 
-  //The instance created here has the ENUMERATE_PORTABILITY flag enabled, as well as two Instance extensions. These
-  //are required for the instance to be used on MacOS via the MoltenVK compatibility layer.
-  let instance =
-    Instance::new(library, 
-      InstanceCreateInfo {
-        flags: InstanceCreateFlags::ENUMERATE_PORTABILITY, 
-        enabled_extensions: InstanceExtensions{khr_get_physical_device_properties2: true, khr_portability_enumeration: true, ..Default::default()},
-        ..Default::default()}).expect("failed to create instance");
-  
+  // The instance created here has the ENUMERATE_PORTABILITY flag enabled, as well as two Instance extensions. These
+  // are required for the instance to be used on MacOS via the MoltenVK compatibility layer.
+  // This means that Vulkan will accept non-fully-conformant targets; if it is using the wrong hardware on your target
+  // system, removing them might help.
+  let instance = Instance::new(
+    library,
+    InstanceCreateInfo {
+      flags: InstanceCreateFlags::ENUMERATE_PORTABILITY,
+      enabled_extensions: InstanceExtensions {
+        khr_get_physical_device_properties2: true,
+        khr_portability_enumeration: true,
+        ..Default::default()
+      },
+      ..Default::default()
+    },
+  )
+  .expect("failed to create instance");
+
   //The Context struct is provided to contain a number of required elements for the Vulkan instance
   //to be used with VkFFT. The new() function creates one with reasonable defaults. However, it is not
   //required to use this struct: one can independently create the required elements, e.g. if integrating
@@ -33,21 +42,21 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 /// # Complex-to-complex FFT
-/// 
+///
 /// Here we perform a simple test using a Fourier transform with a known result,
 /// that the transform of the function exp(i k_x x) should be a delta function
 /// in Fourier space.
-/// 
+///
 /// We pass in an existing context, prepare the necessary buffer, configure
 /// our FFT plan, and then apply it to the buffer.
-/// 
+///
 /// For good measure, we transform back and forth thousands of times to make sure
 /// that the Fourier inversion theorem holds
 fn complex_to_complex_1d(context: &Context) -> Result<(), Box<dyn Error>> {
   let k_coord = 2;
-  println!("------------");
+  println!("================================================================================");
   println!(
-    "Performing 1D complex-to-complex FFT. The plane wave should localize to position [{k_coord}]:"
+    "Performing 1D complex-to-complex FFT.\nThe plane wave should localize to position [{k_coord}]\n:"
   );
 
   // The 1D grid will have 12 complex values, which requires a buffer with twice
@@ -79,7 +88,7 @@ fn complex_to_complex_1d(context: &Context) -> Result<(), Box<dyn Error>> {
   println!("Data:");
   print_complex_matrix_buffer(&data, &printing_size);
 
-  // We have to specify a few things in the VkFFT config: 
+  // We have to specify a few things in the VkFFT config:
   // - the input buffer, which is provided by the Subbuffer object that the Context (via Vulkano)
   //   gave us using the .buffer() impl. We clone the Arc containing it.
   // - we tell VkFFT that the buffer where it should work is also the input buffer, i.e. we're
@@ -107,7 +116,7 @@ fn complex_to_complex_1d(context: &Context) -> Result<(), Box<dyn Error>> {
     .normalize()
     .dim(&size);
   let (mut app, mut params, builder) = context.start_fft_chain(config_builder, FftType::Inverse)?;
-  for _ in 0..4095{
+  for _ in 0..4095 {
     (app, params) = context.chain_fft_with_app(app, params, FftType::Forward)?;
     (app, params) = context.chain_fft_with_app(app, params, FftType::Inverse)?;
   }
@@ -115,7 +124,7 @@ fn complex_to_complex_1d(context: &Context) -> Result<(), Box<dyn Error>> {
   // Note that it is not necessary to do all of this through the Context we define here,
   // but this step especially is somewhat tricky in Vulkano since passing the command
   // buffer to a C library like VkFFT requires an UnsafeCommandBuffer struct, which
-  // needs to be submitted to a queue using low-level unsafe functions.
+  // needs to be submitted to a Vulkan queue using low-level unsafe functions.
   context.submit(builder.build()?)?;
 
   println!("After 4096 forward and inverse transforms:");
@@ -137,8 +146,8 @@ fn real_to_complex_2d(context: &Context) -> Result<(), Box<dyn Error>> {
   //we define the position of the output delta function
   let k_x_coord = 2;
   let k_y_coord = 3;
-  println!("------------");
-  println!("Performing 2D real-to-complex FFT. The plane wave should localize to position [{k_x_coord}, {k_y_coord}]:");
+  println!("================================================================================");
+  println!("Performing 2D real-to-complex FFT.\nThe plane wave should localize to position [{k_x_coord}, {k_y_coord}]:\n");
 
   //The size array now has two elements
   let size = [8, 8];
@@ -182,12 +191,12 @@ fn real_to_complex_2d(context: &Context) -> Result<(), Box<dyn Error>> {
   // otherwise it would be best to put these in the same command buffer. Note that we use a
   // similar set of commands to tell vkfft to put formatted data in the output buffer.
   let config_builder_inverse = Config::builder()
-  .output_buffer(data.buffer().clone())
-  .buffer(data.buffer().clone())
-  .r2c()
-  .output_formatted(true)
-  .normalize()
-  .dim(&size);
+    .output_buffer(data.buffer().clone())
+    .buffer(data.buffer().clone())
+    .r2c()
+    .output_formatted(true)
+    .normalize()
+    .dim(&size);
 
   context.single_fft(config_builder_inverse, FftType::Inverse)?;
   println!("Transforming back:");
@@ -195,13 +204,13 @@ fn real_to_complex_2d(context: &Context) -> Result<(), Box<dyn Error>> {
   Ok(())
 }
 
-
 /// # Convolution
 /// A common use of FFTs is to exploit the convolution theorem, which says that a convolution
 /// in a given domain is a multiplication in its Fourier-conjugate domain. VkFFT has some optimizations
 /// that allow this to take place more efficiently than if we were to do the multiplication step separately.
 fn convolution(context: &Context) -> Result<(), Box<dyn Error>> {
-  println!("------------");
+  println!("================================================================================");
+  println!("Perform a 2D convolution:\nCircular shift operation\n");
   // In doing convolutions, we may want to have a multi-element feature vector; in this case we don't
   // since we're just doing a simple scalar convolution
   let coordinate_features = 1;
@@ -217,13 +226,17 @@ fn convolution(context: &Context) -> Result<(), Box<dyn Error>> {
 
   //We'll just put a delta function in the data array
   data.write()?.iter_mut().enumerate().for_each(|(i, val)| {
-    if i == 20 {*val=100.0f32;}
+    if i == 20 {
+      *val = 100.0f32;
+    }
   });
 
-  //and another delta function in the kernel array. We can (circularly) shift the position of the
+  //and another delta function in the kernel array. We can (circularly) shift the
   //data by the position of this; here we move it one pixel to the right
-  kernel.write()?.iter_mut().enumerate().for_each(|(i,val)|{
-    if i == 1 {*val = 1.0f32}
+  kernel.write()?.iter_mut().enumerate().for_each(|(i, val)| {
+    if i == 1 {
+      *val = 1.0f32
+    }
   });
 
   println!("Data:");
@@ -243,7 +256,8 @@ fn convolution(context: &Context) -> Result<(), Box<dyn Error>> {
     .dim(&size);
 
   //we are going to run everything on one command buffer
-  let (_app, _params, builder) = context.start_fft_chain(config_builder_kernel, FftType::Forward)?;
+  let (_app, _params, builder) =
+    context.start_fft_chain(config_builder_kernel, FftType::Forward)?;
 
   // Next, we build the plan for the convolution. Here we have to call:
   // - input_buffer() with input_formatted() again
@@ -252,18 +266,19 @@ fn convolution(context: &Context) -> Result<(), Box<dyn Error>> {
   // - kernel() to point VkFFT to the kernel buffer
   // - normalize() so that the output doesn't get multiplied by the size of the array
   let config_builder_convolution = Config::builder()
-  .input_buffer(data.buffer().clone())
-  .buffer(data.buffer().clone())
-  .kernel(kernel.buffer().clone())
-  .convolution()
-  .coordinate_features(coordinate_features)
-  .r2c()
-  .input_formatted(true)
-  .inverse_return_to_input()
-  .normalize()
-  .dim(&size);
+    .input_buffer(data.buffer().clone())
+    .buffer(data.buffer().clone())
+    .kernel(kernel.buffer().clone())
+    .convolution()
+    .coordinate_features(coordinate_features)
+    .r2c()
+    .input_formatted(true)
+    .inverse_return_to_input()
+    .normalize()
+    .dim(&size);
 
-  let (_app,_params,builder) = context.chain_fft_with_config(config_builder_convolution, builder, FftType::Forward)?;
+  let (_app, _params, builder) =
+    context.chain_fft_with_config(config_builder_convolution, builder, FftType::Forward)?;
   context.submit(builder.build()?)?;
   println!("Convolved:");
   print_matrix_buffer(&data, &size);

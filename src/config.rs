@@ -44,6 +44,8 @@ pub struct ConfigBuilder<'a> {
   kernel_convolution: bool,
   convolution: bool,
   r2c: bool,
+  dct: Option<u64>,
+  dst: Option<u64>,
   coordinate_features: u32,
   disable_reorder_four_step: bool,
   batch_count: Option<u32>,
@@ -72,6 +74,8 @@ impl<'a> ConfigBuilder<'a> {
       zeropad_right: [0, 0, 0, 0],
       kernel_convolution: false,
       r2c: false,
+      dct: None,
+      dst: None,
       coordinate_features: 1,
       disable_reorder_four_step: false,
       buffer: None,
@@ -133,32 +137,27 @@ impl<'a> ConfigBuilder<'a> {
     self
   }
 
-  pub fn buffer(mut self, buffer: Arc<Buffer>) -> Self
-  {
+  pub fn buffer(mut self, buffer: Arc<Buffer>) -> Self {
     self.buffer = Some(buffer);
     self
   }
 
-  pub fn temp_buffer(mut self, temp_buffer: Arc<Buffer>) -> Self
-  {
+  pub fn temp_buffer(mut self, temp_buffer: Arc<Buffer>) -> Self {
     self.temp_buffer = Some(temp_buffer);
     self
   }
 
-  pub fn input_buffer(mut self, input_buffer: Arc<Buffer>) -> Self
-  {
+  pub fn input_buffer(mut self, input_buffer: Arc<Buffer>) -> Self {
     self.input_buffer = Some(input_buffer);
     self
   }
 
-  pub fn output_buffer(mut self, output_buffer: Arc<Buffer>) -> Self
-  {
+  pub fn output_buffer(mut self, output_buffer: Arc<Buffer>) -> Self {
     self.output_buffer = Some(output_buffer);
     self
   }
 
-  pub fn kernel(mut self, kernel: Arc<Buffer>) -> Self
-  {
+  pub fn kernel(mut self, kernel: Arc<Buffer>) -> Self {
     self.kernel = Some(kernel);
     self
   }
@@ -185,6 +184,16 @@ impl<'a> ConfigBuilder<'a> {
 
   pub fn r2c(mut self) -> Self {
     self.r2c = true;
+    self
+  }
+
+  pub fn dct(mut self, dct: u64) -> Self {
+    self.dct = Some(dct);
+    self
+  }
+
+  pub fn dst(mut self, dst: u64) -> Self {
+    self.dct = Some(dst);
     self
   }
 
@@ -315,6 +324,8 @@ impl<'a> ConfigBuilder<'a> {
       zeropad_right: self.zeropad_right,
       kernel_convolution: self.kernel_convolution,
       r2c: self.r2c,
+      dct: self.dct,
+      dst: self.dst,
       coordinate_features: self.coordinate_features,
       disable_reorder_four_step: self.disable_reorder_four_step,
       buffer: self.buffer,
@@ -383,6 +394,12 @@ pub struct Config<'a> {
 
   /// Perform R2C/C2R decomposition
   pub r2c: bool,
+
+  /// Perform discrete cos transform (R2R) of type 1-4
+  pub dct: Option<u64>,
+
+  /// Perform discrete sin transform (R2R) of type 1-4
+  pub dst: Option<u64>,
 
   /// C - coordinate, or dimension of features vector. In matrix convolution - size of vector
   pub coordinate_features: u32,
@@ -614,6 +631,8 @@ impl<'a> Config<'a> {
       }
       res.config.kernelConvolution = self.kernel_convolution as u64;
       res.config.performR2C = self.r2c.into();
+      res.config.performDCT = self.dct.unwrap_or(0);
+      res.config.performDST = self.dst.unwrap_or(0);
       res.config.coordinateFeatures = self.coordinate_features as u64;
       res.config.disableReorderFourStep = self.disable_reorder_four_step.into();
 
