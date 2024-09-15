@@ -63,7 +63,7 @@ impl<'a> Context<'a> {
       physical.clone(),
       DeviceCreateInfo {
         queue_create_infos: vec![QueueCreateInfo {
-          queue_family_index: queue_family_index,
+          queue_family_index,
           ..Default::default()
         }],
         ..Default::default()
@@ -73,7 +73,7 @@ impl<'a> Context<'a> {
     let pool = Arc::new(CommandPool::new(
       device.clone(),
       CommandPoolCreateInfo {
-        queue_family_index: queue_family_index,
+        queue_family_index,
         flags: CommandPoolCreateFlags::default(),
         ..Default::default()
       },

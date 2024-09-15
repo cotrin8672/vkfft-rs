@@ -43,6 +43,12 @@ pub struct LaunchParamsBuilder {
   kernel: Option<Arc<Buffer>>,
 }
 
+impl Default for LaunchParamsBuilder {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
 impl LaunchParamsBuilder {
   pub fn new() -> Self {
     Self {
@@ -153,26 +159,26 @@ impl LaunchParams {
         kernel: self.kernel.as_ref().map(Self::buffer_object),
       });
 
-      res.params.commandBuffer = transmute(addr_of_mut!(res.command_buffer));
+      res.params.commandBuffer = transmute::<*mut ash::vk::CommandBuffer, *mut *mut vkfft_sys::VkCommandBuffer_T>(addr_of_mut!(res.command_buffer));
 
       if let Some(b) = &res.buffer {
-        res.params.buffer = transmute(b);
+        res.params.buffer = b as *const u64 as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if let Some(b) = &res.temp_buffer {
-        res.params.tempBuffer = transmute(b);
+        res.params.tempBuffer = b as *const u64 as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if let Some(b) = &res.input_buffer {
-        res.params.inputBuffer = transmute(b);
+        res.params.inputBuffer = b as *const u64 as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if let Some(b) = &res.output_buffer {
-        res.params.outputBuffer = transmute(b);
+        res.params.outputBuffer = b as *const u64 as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if let Some(k) = &res.kernel {
-        res.params.kernel = transmute(k);
+        res.params.kernel = k as *const u64 as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       res

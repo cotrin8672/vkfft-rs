@@ -57,7 +57,11 @@ pub struct ConfigBuilder<'a> {
   output_formatted: Option<bool>,
   matrix_convolution: Option<u64>,
 }
-
+impl<'a> Default for ConfigBuilder<'a> {
+  fn default() -> Self {
+      Self::new()
+  }
+}
 impl<'a> ConfigBuilder<'a> {
   pub fn new() -> Self {
     Self {
@@ -556,11 +560,11 @@ impl<'a> Config<'a> {
         queue: self.queue.handle(),
         command_pool: self.command_pool.handle(),
         fence: self.fence.handle(),
-        buffer_size: self.buffer.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
-        temp_buffer_size: self.temp_buffer.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
-        input_buffer_size: self.input_buffer.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
-        output_buffer_size: self.output_buffer.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
-        kernel_size: self.kernel.as_ref().map(|b| b.size()).unwrap_or(0) as u64,
+        buffer_size: self.buffer.as_ref().map(|b| b.size()).unwrap_or(0),
+        temp_buffer_size: self.temp_buffer.as_ref().map(|b| b.size()).unwrap_or(0),
+        input_buffer_size: self.input_buffer.as_ref().map(|b| b.size()).unwrap_or(0),
+        output_buffer_size: self.output_buffer.as_ref().map(|b| b.size()).unwrap_or(0),
+        kernel_size: self.kernel.as_ref().map(|b| b.size()).unwrap_or(0),
         buffer: self.buffer.as_ref().map(|b| b.handle()),
         temp_buffer: self.temp_buffer.as_ref().map(|b| b.handle()),
         input_buffer: self.input_buffer.as_ref().map(|b| b.handle()),
@@ -571,52 +575,52 @@ impl<'a> Config<'a> {
       res.config.FFTdim = self.fft_dim as u64;
       res.config.size = self.size.map(u64::from);
 
-      res.config.physicalDevice = transmute(addr_of_mut!(res.physical_device));
-      res.config.device = transmute(addr_of_mut!(res.device));
-      res.config.queue = transmute(addr_of_mut!(res.queue));
-      res.config.commandPool = transmute(addr_of_mut!(res.command_pool));
-      res.config.fence = transmute(addr_of_mut!(res.fence));
+      res.config.physicalDevice = transmute::<*mut ash::vk::PhysicalDevice, *mut *mut vkfft_sys::VkPhysicalDevice_T>(addr_of_mut!(res.physical_device));
+      res.config.device = transmute::<*mut ash::vk::Device, *mut *mut vkfft_sys::VkDevice_T>(addr_of_mut!(res.device));
+      res.config.queue = transmute::<*mut ash::vk::Queue, *mut *mut vkfft_sys::VkQueue_T>(addr_of_mut!(res.queue));
+      res.config.commandPool = transmute::<*mut ash::vk::CommandPool, *mut *mut vkfft_sys::VkCommandPool_T>(addr_of_mut!(res.command_pool));
+      res.config.fence = transmute::<*mut ash::vk::Fence, *mut *mut vkfft_sys::VkFence_T>(addr_of_mut!(res.fence));
       res.config.normalize = self.normalize.into();
 
       if res.kernel_size != 0 {
-        res.config.kernelSize = transmute(addr_of_mut!(res.kernel_size));
+        res.config.kernelSize = addr_of_mut!(res.kernel_size);
       }
 
       if let Some(t) = &res.kernel {
-        res.config.kernel = transmute(t);
+        res.config.kernel = t as *const ash::vk::Buffer as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if res.buffer_size != 0 {
-        res.config.bufferSize = transmute(addr_of_mut!(res.buffer_size));
+        res.config.bufferSize = addr_of_mut!(res.buffer_size);
       }
 
       if let Some(t) = &res.buffer {
-        res.config.buffer = transmute(t);
+        res.config.buffer = t as *const ash::vk::Buffer as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if res.temp_buffer_size != 0 {
         res.config.userTempBuffer = 1;
-        res.config.tempBufferSize = transmute(addr_of_mut!(res.temp_buffer_size));
+        res.config.tempBufferSize = addr_of_mut!(res.temp_buffer_size);
       }
 
       if let Some(t) = &res.temp_buffer {
-        res.config.tempBuffer = transmute(t);
+        res.config.tempBuffer = t as *const ash::vk::Buffer as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if res.input_buffer_size != 0 {
-        res.config.inputBufferSize = transmute(addr_of_mut!(res.input_buffer_size));
+        res.config.inputBufferSize = addr_of_mut!(res.input_buffer_size);
       }
 
       if let Some(t) = &res.input_buffer {
-        res.config.inputBuffer = transmute(t);
+        res.config.inputBuffer = t as *const ash::vk::Buffer as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if res.output_buffer_size != 0 {
-        res.config.outputBufferSize = transmute(addr_of_mut!(res.output_buffer_size));
+        res.config.outputBufferSize = addr_of_mut!(res.output_buffer_size);
       }
 
       if let Some(t) = &res.output_buffer {
-        res.config.outputBuffer = transmute(t);
+        res.config.outputBuffer = t as *const ash::vk::Buffer as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       res.config.performZeropadding[0] = self.zero_padding[0].into();

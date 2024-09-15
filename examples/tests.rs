@@ -173,7 +173,7 @@ fn real_to_complex_2d(context: &Context) -> Result<(), Box<dyn Error>> {
   //The configuration step looks similar, we just have to call:
   // - r2c(), which tells VkFFT to perform the real-to-complex transform
   // - input_formatted(), which tells VkFFT that the array in the input buffer is
-  //   contiguous, we out padding at the ends
+  //   contiguous, we aren't adding padding at the ends
   let config_builder = Config::builder()
     .input_buffer(data.buffer().clone())
     .buffer(data.buffer().clone())
