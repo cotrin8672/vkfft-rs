@@ -1,4 +1,4 @@
-use vulkano::{buffer::{BufferAccess, CpuAccessibleBuffer}, command_buffer::pool::{UnsafeCommandPool, UnsafeCommandPoolAlloc}};
+use vulkano::{buffer::CpuAccessibleBuffer, command_buffer::pool::{UnsafeCommandPool, UnsafeCommandPoolAlloc}};
 use vulkano::command_buffer::{submit::SubmitCommandBufferBuilder, sys::UnsafeCommandBuffer};
 use vulkano::device::{Device, DeviceExtensions, Features, Queue};
 use vulkano::instance::debug::{DebugCallback, Message, MessageSeverity, MessageType};
@@ -152,15 +152,14 @@ impl<'a> Context<'a> {
 
 pub struct SizeIterator<'a> {
   size: &'a [u32; 2],
-  pos: [u32; 2],
   total: u32,
   iter: u32
 }
 
 impl<'a> SizeIterator<'a> {
   pub fn new(size: &'a [u32; 2]) -> Self {
-    let total = size.iter().cloned().reduce(|a, b| a * b).unwrap();
-    Self { size, pos: [0; 2], total, iter: 0 }
+    let total = size[0] * size[1];
+    Self { size, total, iter: 0 }
   }
 }
 
@@ -168,7 +167,7 @@ impl<'a> Iterator for SizeIterator<'a> {
   type Item = [u32; 2];
 
   fn next(&mut self) -> Option<Self::Item> {
-    if self.iter >= self.total - 1 {
+    if self.iter >= self.total - 2 {
       return None;
     }
 
@@ -221,7 +220,7 @@ impl<'a> Display for MatrixFormatter<'a>
           write!(f, " ")?;
         }
 
-        let spaces = 3 - (value.floor() as i64).digits();
+        let spaces = 4 - (value.floor() as i64).digits();
         for _ in 0..spaces {
           write!(f, " ")?;
         }

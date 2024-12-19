@@ -1,15 +1,15 @@
 use std::sync::Arc;
 
 use error::check_error;
-use vulkano::{buffer::BufferAccess, VulkanHandle, VulkanObject};
+use vulkano::{buffer::Buffer, Handle, VulkanObject};
 
 use crate::{
   config::{Config, ConfigGuard},
   error,
 };
 
+use ash::vk;
 use std::pin::Pin;
-use vk_sys as vk;
 
 use std::ptr::addr_of_mut;
 
@@ -36,11 +36,17 @@ pub enum LaunchError {
 
 pub struct LaunchParamsBuilder {
   command_buffer: Option<vk::CommandBuffer>,
-  buffer: Option<Arc<dyn BufferAccess>>,
-  temp_buffer: Option<Arc<dyn BufferAccess>>,
-  input_buffer: Option<Arc<dyn BufferAccess>>,
-  output_buffer: Option<Arc<dyn BufferAccess>>,
-  kernel: Option<Arc<dyn BufferAccess>>,
+  buffer: Option<Arc<Buffer>>,
+  temp_buffer: Option<Arc<Buffer>>,
+  input_buffer: Option<Arc<Buffer>>,
+  output_buffer: Option<Arc<Buffer>>,
+  kernel: Option<Arc<Buffer>>,
+}
+
+impl Default for LaunchParamsBuilder {
+  fn default() -> Self {
+    Self::new()
+  }
 }
 
 impl LaunchParamsBuilder {
@@ -57,33 +63,33 @@ impl LaunchParamsBuilder {
 
   pub fn command_buffer<C>(mut self, command_buffer: &C) -> Self
   where
-    C: VulkanObject<Object = vk::CommandBuffer>,
+    C: VulkanObject<Handle = vk::CommandBuffer>,
   {
-    self.command_buffer = Some(command_buffer.internal_object());
+    self.command_buffer = Some(command_buffer.handle());
     self
   }
 
-  pub fn buffer(mut self, buffer: Arc<dyn BufferAccess>) -> Self {
+  pub fn buffer(mut self, buffer: Arc<Buffer>) -> Self {
     self.buffer = Some(buffer);
     self
   }
 
-  pub fn temp_buffer(mut self, temp_buffer: Arc<dyn BufferAccess>) -> Self {
+  pub fn temp_buffer(mut self, temp_buffer: Arc<Buffer>) -> Self {
     self.temp_buffer = Some(temp_buffer);
     self
   }
 
-  pub fn input_buffer(mut self, input_buffer: Arc<dyn BufferAccess>) -> Self {
+  pub fn input_buffer(mut self, input_buffer: Arc<Buffer>) -> Self {
     self.input_buffer = Some(input_buffer);
     self
   }
 
-  pub fn output_buffer(mut self, output_buffer: Arc<dyn BufferAccess>) -> Self {
+  pub fn output_buffer(mut self, output_buffer: Arc<Buffer>) -> Self {
     self.output_buffer = Some(output_buffer);
     self
   }
 
-  pub fn kernel(mut self, kernel: Arc<dyn BufferAccess>) -> Self {
+  pub fn kernel(mut self, kernel: Arc<Buffer>) -> Self {
     self.kernel = Some(kernel);
     self
   }
@@ -108,31 +114,37 @@ impl LaunchParamsBuilder {
 #[repr(C)]
 pub(crate) struct LaunchParamsGuard {
   pub(crate) params: vkfft_sys::VkFFTLaunchParams,
-  pub(crate) command_buffer: vk_sys::CommandBuffer,
-  pub(crate) buffer: Option<vk_sys::Buffer>,
-  pub(crate) temp_buffer: Option<vk_sys::Buffer>,
-  pub(crate) input_buffer: Option<vk_sys::Buffer>,
-  pub(crate) output_buffer: Option<vk_sys::Buffer>,
-  pub(crate) kernel: Option<vk_sys::Buffer>,
+  pub(crate) command_buffer: ash::vk::CommandBuffer,
+  pub(crate) buffer: Option<u64>,
+  pub(crate) temp_buffer: Option<u64>,
+  pub(crate) input_buffer: Option<u64>,
+  pub(crate) output_buffer: Option<u64>,
+  pub(crate) kernel: Option<u64>,
 }
 
+#[derive(Clone)]
 pub struct LaunchParams {
   pub command_buffer: vk::CommandBuffer,
-  pub buffer: Option<Arc<dyn BufferAccess>>,
-  pub temp_buffer: Option<Arc<dyn BufferAccess>>,
-  pub input_buffer: Option<Arc<dyn BufferAccess>>,
-  pub output_buffer: Option<Arc<dyn BufferAccess>>,
-  pub kernel: Option<Arc<dyn BufferAccess>>,
+  pub buffer: Option<Arc<Buffer>>,
+  pub temp_buffer: Option<Arc<Buffer>>,
+  pub input_buffer: Option<Arc<Buffer>>,
+  pub output_buffer: Option<Arc<Buffer>>,
+  pub kernel: Option<Arc<Buffer>>,
 }
 
 impl LaunchParams {
   fn buffer_object<B>(buffer: B) -> u64
   where
-    B: AsRef<dyn BufferAccess>,
+    B: AsRef<Buffer>,
   {
-    buffer.as_ref().inner().buffer.internal_object().value()
+    buffer.as_ref().handle().as_raw()
   }
+  // pub fn duplicate(&self) -> Self{
+  //   LaunchParams{
+  //     command_buffer: self.command_buffer.clone(),
 
+  //   }
+  // }
   pub(crate) fn as_sys(&self) -> Pin<Box<LaunchParamsGuard>> {
     use std::mem::{transmute, zeroed};
 
@@ -147,26 +159,26 @@ impl LaunchParams {
         kernel: self.kernel.as_ref().map(Self::buffer_object),
       });
 
-      res.params.commandBuffer = transmute(addr_of_mut!(res.command_buffer));
+      res.params.commandBuffer = transmute::<*mut ash::vk::CommandBuffer, *mut *mut vkfft_sys::VkCommandBuffer_T>(addr_of_mut!(res.command_buffer));
 
       if let Some(b) = &res.buffer {
-        res.params.buffer = transmute(b);
+        res.params.buffer = b as *const u64 as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if let Some(b) = &res.temp_buffer {
-        res.params.tempBuffer = transmute(b);
+        res.params.tempBuffer = b as *const u64 as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if let Some(b) = &res.input_buffer {
-        res.params.inputBuffer = transmute(b);
+        res.params.inputBuffer = b as *const u64 as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if let Some(b) = &res.output_buffer {
-        res.params.outputBuffer = transmute(b);
+        res.params.outputBuffer = b as *const u64 as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       if let Some(k) = &res.kernel {
-        res.params.kernel = transmute(k);
+        res.params.kernel = k as *const u64 as *mut *mut vkfft_sys::VkBuffer_T;
       }
 
       res

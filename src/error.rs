@@ -5,7 +5,7 @@ use derive_more::{Display, Error};
 use crate::{app::LaunchError, config::ConfigError};
 
 #[derive(Display, Debug, Error)]
-pub enum Error {
+pub enum VkfftError {
   InvalidPhysicalDevice,
   InvalidDevice,
   InvalidQueue,
@@ -84,7 +84,7 @@ pub enum Error {
   Launch(LaunchError),
 }
 
-impl TryFrom<vkfft_sys::VkFFTResult> for Error {
+impl TryFrom<vkfft_sys::VkFFTResult> for VkfftError {
   type Error = ();
 
   #[allow(non_upper_case_globals)]
@@ -195,13 +195,13 @@ impl TryFrom<vkfft_sys::VkFFTResult> for Error {
   }
 }
 
-impl From<ConfigError> for Error {
+impl From<ConfigError> for VkfftError {
   fn from(e: ConfigError) -> Self {
     Self::Config(e)
   }
 }
 
-impl From<LaunchError> for Error {
+impl From<LaunchError> for VkfftError {
   fn from(e: LaunchError) -> Self {
     Self::Launch(e)
   }
@@ -214,4 +214,4 @@ pub(crate) fn check_error(result: vkfft_sys::VkFFTResult) -> Result<()> {
   }
 }
 
-pub type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = std::result::Result<T, VkfftError>;
