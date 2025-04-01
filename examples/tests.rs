@@ -28,10 +28,10 @@ fn main() -> Result<(), Box<dyn Error>> {
   )
   .expect("failed to create instance");
 
-  //The Context struct is provided to contain a number of required elements for the Vulkan instance
-  //to be used with VkFFT. The new() function creates one with reasonable defaults. However, it is not
-  //required to use this struct: one can independently create the required elements, e.g. if integrating
-  //VkFFT in a Vulkano toolchain.
+  ///The Context struct is provided to contain a number of required elements for the Vulkan instance
+  ///to be used with VkFFT. The new() function creates one with reasonable defaults. However, it is not
+  ///required to use this struct: one can independently create the required elements, e.g. if integrating
+  ///VkFFT in a Vulkano toolchain.
   let context = Context::new(&instance)?;
 
   //Example ffts:
