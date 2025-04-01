@@ -203,7 +203,7 @@ impl<'a> Context<'a> {
     &self,
     config_builder: ConfigBuilder,
     fft_type: FftType,
-  ) -> Result<(Pin<Box<App>>, LaunchParams, AutoCommandBufferBuilder<PrimaryAutoCommandBuffer>), Box<dyn std::error::Error>>
+  ) -> Result<(Pin<Box<App>>, LaunchParams, Arc<PrimaryAutoCommandBuffer>), Box<dyn std::error::Error>>
   {
     let command_buffer_allocator = Arc::new(
       StandardCommandBufferAllocator::new(
@@ -211,15 +211,15 @@ impl<'a> Context<'a> {
         StandardCommandBufferAllocatorCreateInfo::default(),
       )
     );
-    let builder = unsafe {
+    let buffer = unsafe {
       AutoCommandBufferBuilder::primary(
         command_buffer_allocator,
         self.queue.queue_family_index(),
         CommandBufferUsage::OneTimeSubmit,
-      )?
+      ).unwrap().build().unwrap()
     };
 
-    let mut params = LaunchParams::builder().command_buffer(&builder).build()?;
+    let mut params = LaunchParams::builder().command_buffer(&buffer).build()?;
     let config = config_builder
       .physical_device(self.physical.clone())
       .device(self.device.clone())
@@ -232,7 +232,7 @@ impl<'a> Context<'a> {
       FftType::Forward => app.forward(&mut params)?,
       FftType::Inverse => app.inverse(&mut params)?,
     }
-    Ok((app, params, builder))
+    Ok((app, params, buffer))
   }
   pub fn chain_fft_with_app(
     &self,
@@ -249,9 +249,9 @@ impl<'a> Context<'a> {
   pub fn chain_fft_with_config(
     &self,
     config_builder: ConfigBuilder,
-    builder: AutoCommandBufferBuilder<PrimaryAutoCommandBuffer>,
+    builder: Arc<PrimaryAutoCommandBuffer>,
     fft_type: FftType,
-  ) -> Result<(Pin<Box<App>>, LaunchParams, AutoCommandBufferBuilder<PrimaryAutoCommandBuffer>), Box<dyn std::error::Error>>
+  ) -> Result<(Pin<Box<App>>, LaunchParams, Arc<PrimaryAutoCommandBuffer>), Box<dyn std::error::Error>>
   {
     let mut params = LaunchParams::builder().command_buffer(&builder).build()?;
     let config = config_builder
@@ -274,7 +274,7 @@ impl<'a> Context<'a> {
     fft_type: FftType,
   ) -> Result<(), Box<dyn std::error::Error>> {
     let (_app, _params, builder) = self.start_fft_chain(config_builder, fft_type)?;
-    self.submit(builder.build()?)?;
+    self.submit(builder)?;
     Ok(())
   }
 }

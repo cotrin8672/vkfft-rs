@@ -12,7 +12,7 @@ use ash::vk;
 use std::pin::Pin;
 
 use std::ptr::addr_of_mut;
-use std::fmt::Display;
+use derive_more::{Display, Error};
 
 #[derive(Display, Debug, Error)]
 pub enum BuildError {
@@ -113,7 +113,7 @@ impl LaunchParamsBuilder {
 #[repr(C)]
 pub(crate) struct LaunchParamsGuard {
   pub(crate) params: vkfft_sys::VkFFTLaunchParams,
-  pub(crate) command_buffer: ash::vk::CommandBuffer,
+  pub(crate) command_buffer: vk::CommandBuffer,
   pub(crate) buffer: Option<u64>,
   pub(crate) temp_buffer: Option<u64>,
   pub(crate) input_buffer: Option<u64>,

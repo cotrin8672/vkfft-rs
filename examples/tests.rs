@@ -125,7 +125,7 @@ fn complex_to_complex_1d(context: &Context) -> Result<(), Box<dyn Error>> {
   // but this step especially is somewhat tricky in Vulkano since passing the command
   // buffer to a C library like VkFFT requires an UnsafeCommandBuffer struct, which
   // needs to be submitted to a Vulkan queue using low-level unsafe functions.
-  context.submit(builder.build()?)?;
+  context.submit(builder)?;
 
   println!("After 4096 forward and inverse transforms:");
   print_complex_matrix_buffer(&data, &printing_size);
@@ -279,7 +279,7 @@ fn convolution(context: &Context) -> Result<(), Box<dyn Error>> {
 
   let (_app, _params, builder) =
     context.chain_fft_with_config(config_builder_convolution, builder, FftType::Forward)?;
-  context.submit(builder.build()?)?;
+  context.submit(builder)?;
   println!("Convolved:");
   print_matrix_buffer(&data, &size);
   Ok(())
