@@ -4,6 +4,7 @@ use crate::{
 };
 use ash::vk::Result as ash_Result;
 use std::{pin::Pin, sync::Arc};
+use vulkano::command_buffer::{AutoCommandBufferBuilder, PrimaryAutoCommandBuffer};
 use vulkano::device::{physical::PhysicalDevice, Device, Queue};
 use vulkano::instance::Instance;
 use vulkano::sync::fence::Fence;
@@ -22,7 +23,6 @@ use vulkano::{
   sync::fence::FenceCreateInfo,
   VulkanObject,
 };
-use vulkano::command_buffer::{AutoCommandBufferBuilder, CommandBuffer, PrimaryAutoCommandBuffer};
 
 pub enum FftType {
   Forward,

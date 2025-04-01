@@ -7,7 +7,7 @@ use vulkano::sync::Fence;
 
 use std::{error::Error, fmt::{Display, Formatter}, sync::Arc};
 
-const MESSAGE_SEVERITIES: MessageSeverity = MessageSeverity {
+const MESSAGE_SEVERITIES: Message = MessageSeverity {
   error: true,
   warning: true,
   information: true,
