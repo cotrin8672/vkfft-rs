@@ -12,8 +12,7 @@ use ash::vk;
 use std::pin::Pin;
 
 use std::ptr::addr_of_mut;
-
-use derive_more::{Display, Error};
+use std::fmt::Display;
 
 #[derive(Display, Debug, Error)]
 pub enum BuildError {

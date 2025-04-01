@@ -9,7 +9,6 @@ use vulkano::instance::Instance;
 use vulkano::sync::fence::Fence;
 use vulkano::{
   buffer::{AllocateBufferError, Buffer, BufferContents, BufferCreateInfo, BufferUsage, Subbuffer},
-  command_buffer::sys::UnsafeCommandBuffer,
   memory::allocator::{AllocationCreateInfo, MemoryAllocator, MemoryTypeFilter},
   Validated,
 };
@@ -17,13 +16,14 @@ use vulkano::{
   command_buffer::{
     allocator::{StandardCommandBufferAllocator, StandardCommandBufferAllocatorCreateInfo},
     pool::{CommandPool, CommandPoolCreateFlags, CommandPoolCreateInfo},
-    sys::{CommandBufferBeginInfo, UnsafeCommandBufferBuilder},
     CommandBufferUsage,
   },
   device::{DeviceCreateInfo, QueueCreateInfo, QueueFlags},
   sync::fence::FenceCreateInfo,
   VulkanObject,
 };
+use vulkano::command_buffer::{AutoCommandBufferBuilder, CommandBuffer, PrimaryAutoCommandBuffer};
+
 pub enum FftType {
   Forward,
   Inverse,
@@ -116,7 +116,7 @@ impl<'a> Context<'a> {
 
   pub fn submit(
     &self,
-    command_buffer: UnsafeCommandBuffer,
+    command_buffer: Arc<PrimaryAutoCommandBuffer>,
   ) -> Result<(), Box<dyn std::error::Error>> {
     let fns = self.device.fns();
     let command_buffer_submit_info = ash::vk::CommandBufferSubmitInfo {
@@ -131,7 +131,7 @@ impl<'a> Context<'a> {
         ..Default::default()
       };
       if self.device.api_version() >= vulkano::Version::V1_3 {
-        self.queue.with(|_| {
+        self.queue.with(|_| unsafe {
           let submit_result = unsafe {
             (fns.v1_3.queue_submit2)(
               self.queue.handle(),
@@ -151,7 +151,7 @@ impl<'a> Context<'a> {
           self.fence.reset().unwrap();
         });
       } else {
-        self.queue.with(|_| {
+        self.queue.with(|_| unsafe {
           let submit_result = unsafe {
             (fns.khr_synchronization2.queue_submit2_khr)(
               self.queue.handle(),
@@ -177,7 +177,7 @@ impl<'a> Context<'a> {
         p_command_buffers: &command_buffer_submit_info.command_buffer,
         ..Default::default()
       };
-      self.queue.with(|_| {
+      self.queue.with(|_| unsafe {
         let submit_result = unsafe {
           (fns.v1_0.queue_submit)(
             self.queue.handle(),
@@ -203,21 +203,19 @@ impl<'a> Context<'a> {
     &self,
     config_builder: ConfigBuilder,
     fft_type: FftType,
-  ) -> Result<(Pin<Box<App>>, LaunchParams, UnsafeCommandBufferBuilder), Box<dyn std::error::Error>>
+  ) -> Result<(Pin<Box<App>>, LaunchParams, AutoCommandBufferBuilder<PrimaryAutoCommandBuffer>), Box<dyn std::error::Error>>
   {
-    let command_buffer_allocator = StandardCommandBufferAllocator::new(
-      self.device.clone(),
-      StandardCommandBufferAllocatorCreateInfo::default(),
+    let command_buffer_allocator = Arc::new(
+      StandardCommandBufferAllocator::new(
+        self.device.clone(),
+        StandardCommandBufferAllocatorCreateInfo::default(),
+      )
     );
     let builder = unsafe {
-      UnsafeCommandBufferBuilder::new(
-        &command_buffer_allocator,
+      AutoCommandBufferBuilder::primary(
+        command_buffer_allocator,
         self.queue.queue_family_index(),
-        vulkano::command_buffer::CommandBufferLevel::Primary,
-        CommandBufferBeginInfo {
-          usage: CommandBufferUsage::OneTimeSubmit,
-          ..Default::default()
-        },
+        CommandBufferUsage::OneTimeSubmit,
       )?
     };
 
@@ -251,9 +249,9 @@ impl<'a> Context<'a> {
   pub fn chain_fft_with_config(
     &self,
     config_builder: ConfigBuilder,
-    builder: UnsafeCommandBufferBuilder,
+    builder: AutoCommandBufferBuilder<PrimaryAutoCommandBuffer>,
     fft_type: FftType,
-  ) -> Result<(Pin<Box<App>>, LaunchParams, UnsafeCommandBufferBuilder), Box<dyn std::error::Error>>
+  ) -> Result<(Pin<Box<App>>, LaunchParams, AutoCommandBufferBuilder<PrimaryAutoCommandBuffer>), Box<dyn std::error::Error>>
   {
     let mut params = LaunchParams::builder().command_buffer(&builder).build()?;
     let config = config_builder
