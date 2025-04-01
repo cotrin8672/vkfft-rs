@@ -4,7 +4,7 @@ use crate::{
 };
 use ash::vk::Result as ash_Result;
 use std::{pin::Pin, sync::Arc};
-use vulkano::command_buffer::{AutoCommandBufferBuilder, PrimaryAutoCommandBuffer};
+use vulkano::command_buffer::{AutoCommandBufferBuilder, CommandBufferInheritanceInfo, PrimaryAutoCommandBuffer, SecondaryAutoCommandBuffer};
 use vulkano::device::{physical::PhysicalDevice, Device, Queue};
 use vulkano::instance::Instance;
 use vulkano::sync::fence::Fence;
@@ -116,7 +116,7 @@ impl<'a> Context<'a> {
 
   pub fn submit(
     &self,
-    command_buffer: Arc<PrimaryAutoCommandBuffer>,
+    command_buffer: Arc<SecondaryAutoCommandBuffer>,
   ) -> Result<(), Box<dyn std::error::Error>> {
     let fns = self.device.fns();
     let command_buffer_submit_info = ash::vk::CommandBufferSubmitInfo {
@@ -203,7 +203,7 @@ impl<'a> Context<'a> {
     &self,
     config_builder: ConfigBuilder,
     fft_type: FftType,
-  ) -> Result<(Pin<Box<App>>, LaunchParams, Arc<PrimaryAutoCommandBuffer>), Box<dyn std::error::Error>>
+  ) -> Result<(Pin<Box<App>>, LaunchParams, Arc<SecondaryAutoCommandBuffer>), Box<dyn std::error::Error>>
   {
     let command_buffer_allocator = Arc::new(
       StandardCommandBufferAllocator::new(
@@ -212,10 +212,11 @@ impl<'a> Context<'a> {
       )
     );
     let buffer = unsafe {
-      AutoCommandBufferBuilder::primary(
+      AutoCommandBufferBuilder::secondary(
         command_buffer_allocator,
         self.queue.queue_family_index(),
         CommandBufferUsage::OneTimeSubmit,
+        CommandBufferInheritanceInfo::default()
       ).unwrap().build().unwrap()
     };
 
@@ -249,9 +250,9 @@ impl<'a> Context<'a> {
   pub fn chain_fft_with_config(
     &self,
     config_builder: ConfigBuilder,
-    builder: Arc<PrimaryAutoCommandBuffer>,
+    builder: Arc<SecondaryAutoCommandBuffer>,
     fft_type: FftType,
-  ) -> Result<(Pin<Box<App>>, LaunchParams, Arc<PrimaryAutoCommandBuffer>), Box<dyn std::error::Error>>
+  ) -> Result<(Pin<Box<App>>, LaunchParams, Arc<SecondaryAutoCommandBuffer>), Box<dyn std::error::Error>>
   {
     let mut params = LaunchParams::builder().command_buffer(&builder).build()?;
     let config = config_builder

@@ -120,11 +120,11 @@ fn complex_to_complex_1d(context: &Context) -> Result<(), Box<dyn Error>> {
     (app, params) = context.chain_fft_with_app(app, params, FftType::Forward)?;
     (app, params) = context.chain_fft_with_app(app, params, FftType::Inverse)?;
   }
-  // we submit the command buffer to Vulkan to run on the GPU
-  // Note that it is not necessary to do all of this through the Context we define here,
-  // but this step especially is somewhat tricky in Vulkano since passing the command
-  // buffer to a C library like VkFFT requires an UnsafeCommandBuffer struct, which
-  // needs to be submitted to a Vulkan queue using low-level unsafe functions.
+  /// we submit the command buffer to Vulkan to run on the GPU
+  /// Note that it is not necessary to do all of this through the Context we define here,
+  /// but this step especially is somewhat tricky in Vulkano since passing the command
+  /// buffer to a C library like VkFFT requires an UnsafeCommandBuffer struct, which
+  /// needs to be submitted to a Vulkan queue using low-level unsafe functions.
   context.submit(builder)?;
 
   println!("After 4096 forward and inverse transforms:");
